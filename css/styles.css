@@ -42,20 +42,59 @@ main {
 
 .home {
     display: flex;
+    flex-wrap: wrap;
     position: absolute;
+    align-items: center;
+    justify-content: center;
     top: 46.7%;
     left: 33.5%;
     min-width: 20%;
     min-height: 18.4%;
+    max-width: 20%;
+    max-height: 18.4%;
     transform: translate(-50%, -50%);
     color: white;
     background-color: aliceblue;
+    background-image: url('/assets/media/images/pokebola-background.png');
+    background-size:contain;
+    background-position: center;
+    background-repeat: no-repeat;
     font-size: clamp(0.4rem, 1.5vw, 1.6rem);
     z-index: 100;
     border-radius: 6px;
-    opacity: 0;
-    visibility: hidden;
-    pointer-events: none;
+    overflow: auto;
+    gap: 1%;
+    padding: 0.3%;
+}
+
+.pokeCard {
+    width: 32%;
+    height: 32%;
+    background-color: transparent;
+    display: flex;
+    color: black;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    border: 1px solid black;
+    margin-bottom: 1%;
+}
+
+.pokeCard p {
+    font-size: clamp(0.2rem, 2vw, 1.4rem);
+    background-color: rgba(255, 255, 255, 0.8);
+    text-align: center;
+}
+
+.pokeCard:hover {
+    background-color: rgba(255, 255, 255, 0.8);
+    transform: scale(1.05);
+    transition: all 0.2s ease-in-out;
+}
+
+.pokeCard img {
+    width: 80%;
+    height: auto;
 }
 
 #searchInput {
@@ -91,9 +130,9 @@ main {
 
     /* efeito alto relevo */
     box-shadow:
-        0 6px 0 #666,
+        0 clamp(2px, 2vw, 6px) 0 #666,
         /* base (peso) */
-        0 8px 12px rgba(0, 0, 0, 0.4),
+        0 clamp(3px, 2.5vw, 8px) clamp(6px, 3vw, 12px) rgba(0, 0, 0, 0.4),
         /* sombra externa */
         inset 0 2px 4px rgba(255, 255, 255, 0.8),
         /* luz interna topo */
@@ -108,8 +147,8 @@ main {
     /* sobe levemente */
 
     box-shadow:
-        0 8px 0 #666,
-        0 10px 14px rgba(0, 0, 0, 0.5),
+        0 clamp(3px, 2.5vw, 8px) 0 #666,
+        0 clamp(4px, 3vw, 10px) clamp(8px, 3.5vw, 14px) rgba(0, 0, 0, 0.5),
         inset 0 2px 6px rgba(255, 255, 255, 0.9),
         inset 0 -4px 6px rgba(0, 0, 0, 0.35);
 }
@@ -119,8 +158,8 @@ main {
     /* afunda */
 
     box-shadow:
-        0 2px 0 #666,
-        0 3px 6px rgba(0, 0, 0, 0.4),
+        0 clamp(1px, 1.5vw, 2px) 0 #666,
+        0 clamp(1.5px, 1.5vw, 3px) clamp(3px, 2vw, 6px) rgba(0, 0, 0, 0.4),
         inset 0 3px 6px rgba(0, 0, 0, 0.4),
         inset 0 -1px 2px rgba(255, 255, 255, 0.6);
 }
@@ -144,8 +183,8 @@ main {
 
     /* efeito alto relevo */
     box-shadow:
-            0 6px 0 #5a0000,
-            0 8px 12px rgba(0, 0, 0, 0.4),
+            0 clamp(2px, 2vw, 6px) 0 #5a0000,
+            0 clamp(3px, 2.5vw, 8px) clamp(6px, 3vw, 12px) rgba(0, 0, 0, 0.4),
             inset 0 2px 4px rgba(255, 255, 255, 0.6),
             inset 0 -3px 5px rgba(0, 0, 0, 0.4);
 
@@ -157,8 +196,8 @@ main {
     /* sobe levemente */
 
     box-shadow:
-        0 8px 0 #5a0000,
-        0 10px 14px rgba(0, 0, 0, 0.5),
+        0 clamp(3px, 2.5vw, 8px) 0 #5a0000,
+        0 clamp(4px, 3vw, 10px) clamp(8px, 3.5vw, 14px) rgba(0, 0, 0, 0.5),
         inset 0 2px 6px rgba(255, 255, 255, 0.9),
         inset 0 -4px 6px rgba(0, 0, 0, 0.35);
     
@@ -170,10 +209,57 @@ main {
     /* afunda */
 
     box-shadow:
-        0 2px 0 #666,
-        0 3px 6px rgba(0, 0, 0, 0.4),
+        0 clamp(1px, 1.5vw, 2px) 0 #666,
+        0 clamp(1.5px, 1.5vw, 3px) clamp(3px, 2vw, 6px) rgba(0, 0, 0, 0.4),
         inset 0 3px 6px rgba(0, 0, 0, 0.4),
         inset 0 -1px 2px rgba(255, 255, 255, 0.6);
+}
+
+#muteButton {
+    position: absolute;
+    top: 59.8%;
+    left: 32%;
+    transform: translate(-50%, -50%);
+
+    width: 2.5%;
+    height: 3%;
+
+    border-radius: 50%;
+    border: 2px solid #333;
+
+    font-size: clamp(0.8rem, 1.2vw, 1.5rem);
+    background: radial-gradient(circle at 30% 30%, #e0e0e0, #b0b0b0 60%, #808080);
+    color: black;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    box-shadow:
+        0 clamp(2px, 1.5vw, 4px) 0 #555,
+        0 clamp(2px, 2vw, 6px) clamp(4px, 2.5vw, 8px) rgba(0, 0, 0, 0.3),
+        inset 0 2px 3px rgba(255, 255, 255, 0.6),
+        inset 0 -2px 4px rgba(0, 0, 0, 0.3);
+
+    transition: all 0.1s ease-in-out;
+}
+
+#muteButton:hover {
+    transform: translate(-50%, -51%);
+    box-shadow:
+        0 clamp(2px, 1.5vw, 4px) 0 #555,
+        0 clamp(3px, 2.5vw, 7px) clamp(5px, 3vw, 10px) rgba(0, 0, 0, 0.4),
+        inset 0 2px 4px rgba(255, 255, 255, 0.7),
+        inset 0 -2px 5px rgba(0, 0, 0, 0.35);
+}
+
+#muteButton:active {
+    transform: translate(-50%, -48%);
+    box-shadow:
+        0 clamp(1px, 1vw, 2px) 0 #555,
+        0 clamp(1px, 1.5vw, 3px) clamp(2px, 1.5vw, 4px) rgba(0, 0, 0, 0.3),
+        inset 0 2px 3px rgba(0, 0, 0, 0.3),
+        inset 0 -1px 2px rgba(255, 255, 255, 0.5);
 }
 
 .dpad {
@@ -357,7 +443,7 @@ main {
         z-index: 10;
 }
 
-.visorDireito.hidden {
+.visorDireito.hidden, .home.hidden{
     opacity: 0;
     visibility: hidden;
     pointer-events: none;
@@ -581,6 +667,10 @@ main {
     background-color: #113622;
     border-radius: 4px;
     height: 100%;
+}
+
+.moveItem .typeIcon{
+    margin-left: 0!important;
 }
 
 .moveType .typeIcon {

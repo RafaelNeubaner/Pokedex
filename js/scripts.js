@@ -9,12 +9,20 @@ const downButton = document.getElementById('downButton');
 const centerButton = document.getElementById('centerButton');
 const okButton = document.getElementById('okButton');
 const backButton = document.getElementById('backButton');
+const muteButton = document.getElementById('muteButton');
 const searchInput = document.getElementById('searchInput');
 const infoSection = document.querySelector('.PokeInfo');
 const statsSection = document.querySelector('.pokeStats');
 const movesSection = document.querySelector('.pokeMoves');
 const evosSection = document.querySelector('.pokeEvos');
+const homeSection = document.querySelector('.home');
 
+// Controle de áudio
+let isMuted = false;
+//controle de pagonação
+let selectedCardIndex = 0;
+
+//função para buscar os dados do pokemon na API
 const fetchPokemonData = async (pokemon) => {
   try {
     const response = await fetch(`https://pokeapi.co/api/v2/pokemon/${pokemon.toLowerCase()}`);
@@ -29,6 +37,7 @@ const fetchPokemonData = async (pokemon) => {
   }
 }
 
+//botoes do footer
 infosButton.forEach(button => {
     button.addEventListener('click', async () => {
         let pokemonName = document.querySelector('.PokemonSpecies').textContent;
@@ -61,34 +70,174 @@ evosButton.forEach(button => {
   });
 });
 
-leftButton.addEventListener('click', () => {
-  // Logic for left button
+const maxOffset = 649;
+const limit = 6;
+
+const getHomeCards = () => Array.from(document.querySelectorAll('.home .pokeCard'));
+
+//aplica a classe hovered no card
+const setCardHoveredState = (card, isHovered) => {
+  const cardImage = card.querySelector('.cardImage');
+  const defaultImage = card.dataset.defaultImage;
+  const hoverImage = card.dataset.hoverImage;
+  const canAnimate = card.dataset.canAnimate === 'true';
+
+  if (isHovered) {
+    card.classList.add('hovered');
+    if (canAnimate && hoverImage) {
+      cardImage.src = hoverImage;
+    }
+    return;
+  }
+
+  card.classList.remove('hovered');
+  if (defaultImage) {
+    cardImage.src = defaultImage;
+  }
+};
+
+const updateSelectedCard = (newIndex) => {
+  const cards = getHomeCards();
+  if (cards.length === 0) {
+    selectedCardIndex = 0;
+    return;
+  }
+
+  //prevenção de eerros
+  const safeIndex = Math.max(0, Math.min(newIndex, cards.length - 1));
+  cards.forEach((card, index) => setCardHoveredState(card, index === safeIndex));
+  selectedCardIndex = safeIndex;
+};
+
+const isHomeVisible = () => !homeSection.classList.contains('hidden');
+
+const goToPage = async (newOffset, selectedIndex) => {
+  if (newOffset < 0 || newOffset > maxOffset) {
+    return false;
+  }
+
+  currentOffset = newOffset;
+  await loadHomePage(currentOffset, limit, selectedIndex);
+  return true;
+};
+
+//funções que serão chamadas elo d-pad
+const moveSelectionRight = async () => {
+  const cards = getHomeCards();
+  if (cards.length === 0) {
+    return;
+  }
+
+  if (selectedCardIndex < cards.length - 1) {
+    updateSelectedCard(selectedCardIndex + 1);
+    return;
+  }
+
+  await goToPage(currentOffset + limit, 0);
+};
+
+const moveSelectionLeft = async () => {
+  if (selectedCardIndex > 0) {
+    updateSelectedCard(selectedCardIndex - 1);
+    return;
+  }
+
+  const moved = await goToPage(currentOffset - limit, limit - 1);
+  if (moved) {
+    const cards = getHomeCards();
+    updateSelectedCard(Math.min(limit - 1, cards.length - 1));
+  }
+};
+
+const moveSelectionDown = async () => {
+  const cards = getHomeCards();
+  if (cards.length === 0) {
+    return;
+  }
+
+  if (selectedCardIndex <= 2) {
+    const nextIndex = selectedCardIndex + 3;
+    if (nextIndex < cards.length) {
+      updateSelectedCard(nextIndex);
+      return;
+    }
+  }
+
+  const targetColumn = selectedCardIndex % 3;
+  await goToPage(currentOffset + limit, targetColumn);
+};
+
+const moveSelectionUp = async () => {
+  if (selectedCardIndex >= 3) {
+    updateSelectedCard(selectedCardIndex - 3);
+    return;
+  }
+
+  const targetColumn = selectedCardIndex;
+  const moved = await goToPage(currentOffset - limit, targetColumn + 3);
+  if (moved) {
+    const cards = getHomeCards();
+    updateSelectedCard(Math.min(targetColumn + 3, cards.length - 1));
+  }
+};
+
+const activateSelectedCard = () => {
+  const cards = getHomeCards();
+  if (cards.length === 0) {
+    return;
+  }
+
+  const selectedCard = cards[selectedCardIndex];
+  if (selectedCard) {
+    selectedCard.click();
+  }
+};
+
+//botoes d-pad
+leftButton.addEventListener('click', async () => {
+  if (!isHomeVisible()) {
+    return;
+  }
+  await moveSelectionLeft();
 });
 
-rightButton.addEventListener('click', () => {
-  // Logic for right button
+rightButton.addEventListener('click', async () => {
+  if (!isHomeVisible()) {
+    return;
+  }
+  await moveSelectionRight();
 });
 
-upButton.addEventListener('click', () => {
-  // Logic for up button
+upButton.addEventListener('click', async () => {
+  if (!isHomeVisible()) {
+    return;
+  }
+  await moveSelectionUp();
 });
 
-downButton.addEventListener('click', () => {
-  // Logic for down button
+downButton.addEventListener('click', async () => {
+  if (!isHomeVisible()) {
+    return;
+  }
+  await moveSelectionDown();
 });
 
 centerButton.addEventListener('click', () => {
-  // Logic for center button
+  if (!isHomeVisible()) {
+    return;
+  }
+  activateSelectedCard();
 });
 
-//Função para fazer a busca
+//Função para fazer a busca quando clicar no botão de ok ou pressionar Enter
 const buscarPokemon = async () => {
     const pokemonName = searchInput.value.trim();
     if (pokemonName) {
         const pokemon = await fetchPokemonData(pokemonName);
         if (pokemon) {
             pokeInfo(pokemon);
-            searchInput.value = ''; // Limpar o input após a busca bem-sucedida
+          searchInput.value = '';
+          homeSection.classList.add('hidden');
         }
     } else {
         alert('Please enter a Pokemon name.');
@@ -97,6 +246,13 @@ const buscarPokemon = async () => {
 
 //logica ao clicar no okbutton
 okButton.addEventListener('click', buscarPokemon);
+
+//logica ao clicar no botão de mute
+muteButton.addEventListener('click', () => {
+  isMuted = !isMuted;
+  muteButton.textContent = isMuted ? '🔇' : '🔊';
+  muteButton.style.opacity = isMuted ? '0.5' : '1';
+});
 
 //logica ao pressionar Enter no input de pesquisa
 searchInput.addEventListener('keypress', (event) => {
@@ -107,44 +263,18 @@ searchInput.addEventListener('keypress', (event) => {
 
 //Função para resetar o Pokedex ao estado inicial
 const resetPokedex = () => {
-    // Limpar nome e número do Pokémon
-    document.getElementById('PokemonName').textContent = '';
-    document.getElementById('PokemonNumber').textContent = '';
-    document.getElementById('PokemonGif').src = '';
-    
-    // Resetar para o estado inicial (Pikachu)
-    document.getElementsByClassName('PokemonSpecies')[0].textContent = '';
-    document.getElementsByClassName('PokemonNumber')[0].textContent = '';
-    
-    // Limpar containers de tipo, fraqueza e eficácia
-    document.querySelector('.typeContainer').innerHTML = '';
-    document.querySelector('.weaknessContainer').innerHTML = '';
-    document.querySelector('.effectivenessContainer').innerHTML = '';
-    
-    // Resetar dados físicos
-    document.getElementsByClassName('altura')[0].textContent = '';
-    document.getElementsByClassName('peso')[0].textContent = '';
-    
-    // Resetar descrição
-    document.getElementsByClassName('genera')[0].textContent = '';
-    document.getElementsByClassName('description')[0].textContent = '';
-    
-    // Limpar move list e evo list
-    const movesList = document.querySelector('.moveList');
-    const evosList = document.querySelector('.evoList');
-    if (movesList) movesList.innerHTML = '';
-    if (evosList) evosList.innerHTML = '';
-    
-    // Mostrar apenas a seção de info e esconder as outras
+    // esconder o visor direito e mostrar a tela inicial
     infoSection.classList.add('hidden');
     statsSection.classList.add('hidden');
     movesSection.classList.add('hidden');
     evosSection.classList.add('hidden');
+    homeSection.classList.remove('hidden');
+    
 };
 
 backButton.addEventListener('click', resetPokedex);
 
-
+//função para carregar e exibir as informações do pokemon selecionado
 async function pokeInfo(pokemon) {
   // contenção de erros
   if (!infoSection || !statsSection || !movesSection || !evosSection) {
@@ -153,6 +283,9 @@ async function pokeInfo(pokemon) {
   }
 
     if (pokemon && pokemon.name) {
+        // Reproduzir som do Pokémon ao selecioná-lo
+        playPokemonSound(pokemon.id);
+        
         document.getElementById('PokemonName').textContent = pokemon.name.charAt(0).toUpperCase() + pokemon.name.slice(1);
         document.getElementById('PokemonNumber').textContent = `#${pokemon.id.toString().padStart(4, '0')}`;
         if (pokemon.id <= 649) {
@@ -171,6 +304,7 @@ async function pokeInfo(pokemon) {
         effectivenessContainer.innerHTML = '';
         weaknessContainer.innerHTML = '';
                 
+      // adiciona o ícone do tipo do Pokémon
         const typeIcon = document.createElement('img');
         typeIcon.classList.add('typeIcon');
         let url = pokemon.types[0].type.url;
@@ -179,6 +313,7 @@ async function pokeInfo(pokemon) {
         typeIcon.src = typeData.sprites['generation-viii']['brilliant-diamond-shining-pearl'].name_icon;
         typeContainer.appendChild(typeIcon);
                 
+      // adiciona os ícones dos tipos que são fracos contra o Pokémon
         typeData.damage_relations.double_damage_from.forEach(async (type) => {
             const typeIcon = document.createElement('img');
             typeIcon.classList.add('typeIcon');
@@ -189,6 +324,7 @@ async function pokeInfo(pokemon) {
             weaknessContainer.appendChild(typeIcon);
         });
                 
+      // adiciona os ícones dos tipos que são eficazes contra o Pokémon
         typeData.damage_relations.double_damage_to.forEach(async (type) => {
             const typeIcon = document.createElement('img');
             typeIcon.classList.add('typeIcon');
@@ -200,6 +336,7 @@ async function pokeInfo(pokemon) {
         }
         );
                     
+      //verifica se o pokemon tem mais de um tipo e repete o processo para o segundo tipo
         if (pokemon.types.length > 1) {
             url = pokemon.types[1].type.url;
             temp = await fetch(url);
@@ -210,6 +347,7 @@ async function pokeInfo(pokemon) {
             document.querySelector('.typeContainer').appendChild(typeIcon);
         }
 
+      //carrega o restante dos dados do pokemon
         url = pokemon.species.url;
         temp = await fetch(url);
         const speciesData = await temp.json();
@@ -229,6 +367,7 @@ async function pokeInfo(pokemon) {
     }
 }
 
+//função para carregar e exibir as stats do pokemon selecionado
 async function pokeStats(pokemon) {
     if (pokemon && pokemon.stats) {
         const stats = pokemon.stats;
@@ -254,6 +393,7 @@ async function pokeStats(pokemon) {
     }
 }
 
+//função para carregar e exibir os 10 primeiros movimentos do pokemon selecionado
 async function pokeMoves(pokemon) {
     if (pokemon && pokemon.moves) {
         const movesList = document.querySelector('.moveList');
@@ -298,6 +438,9 @@ async function pokeMoves(pokemon) {
     }
 }
 
+//função para carregar e exibir as evoluções do pokemon selecionado -- por conta da dificuldade por enquanto apenas mostra as evoluções diretas, 
+// ou seja, se o pokemon tiver mais de uma evolução, apenas a primeira será mostrada. O ideal seria mostrar todas as evoluções, mas isso exigiria
+//  uma lógica mais complexa para percorrer toda a cadeia evolutiva que irei me empenhar mais para frente.
 async function pokeEvos(pokemon) {
     if (pokemon && pokemon.species) {
         const evosList = document.querySelector('.evoList');
@@ -310,7 +453,7 @@ async function pokeEvos(pokemon) {
         temp = await fetch(url);
         let evoData = await temp.json();
         const evoChain = [];
-
+      //percorre toda a cadeia evolutiva da url ate encontrar o pokemon selecionado e adiciona as evoluções diretas a uma lista
         const collectEvolutions = (node) => {
           if (!node) {
             return;
@@ -329,7 +472,9 @@ async function pokeEvos(pokemon) {
         if (evoChain.length === 0) {
           evosList.innerHTML = '<p>No evolutions available.</p>';
         } else {
-          console.log(evoChain);
+          // para cada evolução direta encontrada, busca os dados do pokemon evoluído e exibe o nome, número, imagem e detalhes da evolução (se houver)
+          //por enquanto apenas filtra pedra evolutiva, todos os demais casos sao tratados como level up, o que não é o ideal, mas para isso 
+          // seria necessário criar uma lógica mais complexa para tratar cada caso de evolução, planejo montar essa logica posteriormente.
           evoChain.forEach(async (evo) => {
             const name = evo.species.name;
             const evoData = await fetchPokemonData(name);
@@ -381,3 +526,84 @@ async function pokeEvos(pokemon) {
     
 
 }
+
+// Função para reproduzir o som do Pokémon
+const playPokemonSound = (pokemonId) => {
+  if (isMuted) return;
+  
+  try {
+    const cryUrl = `https://raw.githubusercontent.com/PokeAPI/cries/main/cries/pokemon/latest/${pokemonId}.ogg`;
+    const audio = new Audio(cryUrl);
+    audio.play().catch(error => {
+      console.log('Som não disponível para este Pokémon:', error);
+    });
+  } catch (error) {
+    console.error('Erro ao tentar reproduzir som:', error);
+  }
+}
+
+
+//função para popular a home com cards de pokemons utilizando paginação de 6 cards por vez para nao sobrecarregar a API e o navegador, 
+// por enquanto a paginação é feita apenas para os primeiros 151 pokemons, mas planejo expandir isso para os demais pokemons posteriormente.
+const loadHomePage = async (offset = 0, limit = 6, initialSelectedIndex = 0) => {
+    const homeContainer = document.querySelector('.home');
+    homeContainer.innerHTML = '';
+    try {
+        const response = await fetch(`https://pokeapi.co/api/v2/pokemon?offset=${offset}&limit=${limit}`);
+        const data = await response.json();
+        const pokemonList = data.results;
+        for (let index = 0; index < pokemonList.length; index++) {
+            const pokemon = pokemonList[index];
+            const pokemonData = await fetchPokemonData(pokemon.name);
+            if (!pokemonData) {
+              continue;
+            }
+
+            const pokemonCard = document.createElement('article');
+            pokemonCard.classList.add('pokeCard');
+            pokemonCard.innerHTML = `
+                <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${pokemonData.id}.png" alt="${pokemonData.name}" class="cardImage">
+                <p class="cardName">${pokemonData.name.charAt(0).toUpperCase() + pokemonData.name.slice(1)}</p>
+            `;
+            const defaultImage = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${pokemonData.id}.png`;
+            const hoverImage = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/${pokemonData.id}.gif`;
+            const canAnimate = pokemonData.id <= 649;
+
+            pokemonCard.dataset.defaultImage = defaultImage;
+            pokemonCard.dataset.hoverImage = hoverImage;
+            pokemonCard.dataset.canAnimate = canAnimate;
+            pokemonCard.dataset.cardIndex = index;
+
+            pokemonCard.addEventListener('click', () => {
+                pokeInfo(pokemonData);
+                homeSection.classList.add('hidden');
+            });
+
+            pokemonCard.addEventListener('mouseenter', () => {
+              updateSelectedCard(index);
+            });
+
+            pokemonCard.addEventListener('mouseleave', () => {
+              updateSelectedCard(selectedCardIndex);
+            });
+
+            homeContainer.appendChild(pokemonCard);
+            if (index === initialSelectedIndex) {
+              setCardHoveredState(pokemonCard, true);
+              selectedCardIndex = index;
+            } else {
+              setCardHoveredState(pokemonCard, false);
+            }
+        }
+
+        updateSelectedCard(initialSelectedIndex);
+    } catch (error) {
+        console.error('Error loading home page:', error);
+    }
+}
+
+// Carrega a página inicial com os primeiros 6 pokemons
+loadHomePage();
+
+// Lógica para os botões de navegação da home
+let currentOffset = 0;
