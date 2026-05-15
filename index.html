@@ -18,6 +18,9 @@
       href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css"
     />  -->
 
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Rajdhani:wght@400;600&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+
     <!-- Custom CSS -->
     <link rel="stylesheet" href="css/styles.css" />
 
@@ -40,12 +43,14 @@
           id="Pokedex"
         />
         <img src="" alt="" id="PokemonGif" />
-        <h1 class="PokeId">
+        <div class="nameVisor"></div>
+        <h1 class="PokeId title">
           <span id="PokemonName"></span>
           -
           <span id="PokemonNumber"></span>
         </h1>
-        <input type="text" id="searchInput" placeholder="Change Pokemon..." />
+        <div class="searchInputBg"></div>
+        <input type="text" id="searchInput" class="modernInput" placeholder="Buscar Pokémon..." />
         <button id="backButton"></button>
         <button id="okButton"></button>
         <button id="muteButton" title="Mute/Unmute">🔊</button>
@@ -56,16 +61,16 @@
           <div class="arm right" id="rightButton"></div>
           <div class="center" id="centerButton"></div>
         </div>
-        <div class="home">
+        <div class=" glassPanel home">
           
         </div>
         <div class="PokeInfo visorDireito hidden">
           <div class="name">
-            <span class="PokemonSpecies">Pikachu</span>
-            <span class="PokemonNumber">#0025</span>
+            <span class="PokemonSpecies title">Pikachu</span>
+            <span class="PokemonNumber title">#0025</span>
           </div>
           <div class="type">
-            <p>Type:</p>
+            <p>Tipo:</p>
             <div class="typeContainer">
               <img
                 src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/types/generation-viii/brilliant-diamond-shining-pearl/13.png"
@@ -75,38 +80,38 @@
             </div>
           </div>
           <div class="weakness">
-            <p>Weakness:</p>
+            <p>Fraqueza:</p>
             <div class="weaknessContainer"></div>
           </div>
           <div class="effectiveness">
-            <p>Effectiveness:</p>
+            <p>Vantagem:</p>
             <div class="effectivenessContainer"></div>
           </div>
           <p class="genera">Mouse Pokemon</p>
           <div class="dadosFisicos">
-            <p>Height: <span class="altura">0.6m</span></p>
-            <p>Weight: <span class="peso">6.0kg</span></p>
+            <p>Altura: <span class="altura">0.6m</span></p>
+            <p>Peso: <span class="peso">6.0kg</span></p>
           </div>
-          <p class="description">
+          <p class="description text-secondary">
             When several of these POKéMON gather, their electricity could build
             and cause lightning storms.
           </p>
           <footer class="footBar">
             <nav>
               <p class="navItem info active">INFO</p>
-              <p class="navItem stats">STATS</p>
-              <p class="navItem moves">MOVES</p>
-              <p class="navItem evos">EVOS</p>
+              <p class="navItem stats">STATUS</p>
+              <p class="navItem moves">GOLPES</p>
+              <p class="navItem evos">EVOL.</p>
             </nav>
           </footer>
         </div>
 
-        <div class="pokeStats visorDireito hidden">
+        <div class="pokeStats visorDireito glassPanel hidden">
           <div class="statRow">
-            <p class="stat">HP:</p>
+            <p class="stat title">HP:</p>
             <div class="progressContainer">
               <div
-                class="progressBar"
+                class="progressBar hp"
                 role="progressbar"
                 style="width: 35%"
                 aria-valuenow="35"
@@ -114,13 +119,13 @@
                 aria-valuemax="255"
               ></div>
             </div>
-            <span class="statValue">35</span>
+            <span class="statValue text">35</span>
           </div>
           <div class="statRow">
-            <p class="stat">Attack:</p>
+            <p class="stat title">Ataque:</p>
             <div class="progressContainer">
               <div
-                class="progressBar"
+                class="progressBar atk"
                 role="progressbar"
                 style="width: 55%"
                 aria-valuenow="55"
@@ -128,13 +133,13 @@
                 aria-valuemax="190"
               ></div>
             </div>
-            <span class="statValue">55</span>
+            <span class="statValue text">55</span>
           </div>
           <div class="statRow">
-            <p class="stat">Defense:</p>
+            <p class="stat title">Defesa:</p>
             <div class="progressContainer">
               <div
-                class="progressBar"
+                class="progressBar defense"
                 role="progressbar"
                 style="width: 40%"
                 aria-valuenow="40"
@@ -142,13 +147,13 @@
                 aria-valuemax="250"
               ></div>
             </div>
-            <span class="statValue">40</span>
+            <span class="statValue text">40</span>
           </div>
           <div class="statRow">
-            <p class="stat">Sp. Atk:</p>
+            <p class="stat title">Atq. Esp:</p>
             <div class="progressContainer">
               <div
-                class="progressBar"
+                class="progressBar spatk"
                 role="progressbar"
                 style="width: 50%"
                 aria-valuenow="50"
@@ -156,13 +161,13 @@
                 aria-valuemax="194"
               ></div>
             </div>
-            <span class="statValue">50</span>
+            <span class="statValue text">50</span>
           </div>
           <div class="statRow">
-            <p class="stat">Sp. Def:</p>
+            <p class="stat title">Def. Esp:</p>
             <div class="progressContainer">
               <div
-                class="progressBar"
+                class="progressBar spdef"
                 role="progressbar"
                 style="width: 50%"
                 aria-valuenow="50"
@@ -170,13 +175,13 @@
                 aria-valuemax="250"
               ></div>
             </div>
-            <span class="statValue">50</span>
+            <span class="statValue text">50</span>
           </div>
           <div class="statRow">
-            <p class="stat">Speed:</p>
+            <p class="stat title">Velocidade:</p>
             <div class="progressContainer">
               <div
-                class="progressBar"
+                class="progressBar speed"
                 role="progressbar"
                 style="width: 90%"
                 aria-valuenow="90"
@@ -184,33 +189,33 @@
                 aria-valuemax="200"
               ></div>
             </div>
-            <span class="statValue">90</span>
+            <span class="statValue text">90</span>
           </div>
           <footer class="footBar">
             <nav>
               <p class="navItem info">INFO</p>
-              <p class="navItem stats active">STATS</p>
-              <p class="navItem moves">MOVES</p>
-              <p class="navItem evos">EVOS</p>
+              <p class="navItem stats active">STATUS</p>
+              <p class="navItem moves">GOLPES</p>
+              <p class="navItem evos">EVOL.</p>
             </nav>
           </footer>
         </div>
 
-        <div class="pokeMoves visorDireito hidden">
+        <div class="pokeMoves visorDireito glassPanel hidden">
           <div class="visorContent">
             <ul class="moveList"></ul>
           </div>
           <footer class="footBar">
             <nav>
               <p class="navItem info">INFO</p>
-              <p class="navItem stats">STATS</p>
-              <p class="navItem moves active">MOVES</p>
-              <p class="navItem evos">EVOS</p>
+              <p class="navItem stats">STATUS</p>
+              <p class="navItem moves active">GOLPES</p>
+              <p class="navItem evos">EVOL.</p>
             </nav>
           </footer>
         </div>
 
-        <div class="pokeEvos visorDireito hidden">
+        <div class="pokeEvos visorDireito glassPanel hidden">
           <div class="visorContent">
             <div class="evoList">
               <article class="evoItem">
@@ -231,15 +236,15 @@
           <footer class="footBar">
             <nav>
               <p class="navItem info">INFO</p>
-              <p class="navItem stats">STATS</p>
-              <p class="navItem moves">MOVES</p>
-              <p class="navItem evos active">EVOS</p>
+              <p class="navItem stats">STATUS</p>
+              <p class="navItem moves">GOLPES</p>
+              <p class="navItem evos active">EVOL.</p>
             </nav>
           </footer>
         </div>
 
-        <div class="visorDireito reset">
-          <p class="textCenter alignCenter">Select a pokemon</p>
+        <div class="visorDireito glassPanel reset">
+          <p class="textCenter alignCenter">Selecione um pokémon</p>
         </div>
       </section>
     </main>

@@ -1,8 +1,101 @@
 :root {
-    --txt-100: #d1fae5;
-    --txt-200: #a7f3d0;
+    --bg-primary: #050A0F;
+    --bg-glass: rgba(5, 10, 15, 0.7);
+    --neon-cyan: #00F0FF;
+    --neon-cyan-dim: rgba(0, 240, 255, 0.3);
+    --neon-purple: #B026FF;
+    --text-main: #FFFFFF;
+    --text-muted: #A1C7DF;
+    --border-glow: 0 0 10px rgba(0, 240, 255, 0.5);
+    
+    --txt-100: var(--text-main);
+    --txt-200: var(--text-muted);
     --txt-300: #6ee7b7;
-    --txt-500: #10b981;
+    --txt-500: var(--neon-cyan);
+}
+
+.title {
+    color: var(--neon-cyan);
+    font-weight: 700;
+    font-family: 'Orbitron', sans-serif;
+    text-shadow: 0 0 5px var(--neon-cyan);
+}
+
+.card {
+    background: var(--bg-glass);
+    border: 1px solid var(--neon-cyan-dim);
+    border-radius: 10px;
+    box-shadow: 0 0 8px rgba(0, 240, 255, 0.1);
+}
+
+.text {
+    color: var(--text-main);
+    font-family: 'Inter', sans-serif;
+}
+
+.text-secondary {
+    color: var(--text-muted);
+    font-family: 'Inter', sans-serif;
+}
+
+.divider {
+    border-bottom: 1px solid var(--neon-cyan-dim);
+}
+
+.glow {
+    box-shadow: var(--border-glow);
+}
+
+.neonText {
+    text-shadow: 0 0 5px var(--neon-cyan);
+    color: var(--neon-cyan);
+    font-family: 'Rajdhani', sans-serif;
+}
+
+.glassPanel {
+    background: var(--bg-glass);
+    backdrop-filter: blur(12px);
+    border: 1px solid var(--neon-cyan-dim);
+    box-shadow: 0 0 15px rgba(0, 240, 255, 0.1);
+    border-radius: 8px;
+    color: var(--text-main);
+}
+
+.cyberCard {
+    background: rgba(10, 20, 30, 0.6) !important;
+    border: 1px solid var(--neon-cyan-dim) !important;
+    border-radius: 8px !important;
+    box-shadow: 0 0 5px rgba(0, 240, 255, 0.1) !important;
+    transition: all 0.3s ease !important;
+    backdrop-filter: blur(4px) !important;
+    color: var(--text-main) !important;
+}
+
+.cyberCard:hover, .cyberCard.hovered {
+    background: rgba(0, 240, 255, 0.1) !important;
+    border-color: var(--neon-cyan) !important;
+    box-shadow: var(--border-glow) !important;
+    transform: scale(1.05) !important;
+}
+
+.modernInput {
+    background: rgba(0, 0, 0, 0.5) !important;
+    border: 1px solid var(--neon-cyan-dim) !important;
+    color: var(--neon-cyan) !important;
+    font-family: 'Rajdhani', sans-serif !important;
+    outline: none !important;
+    box-shadow: inset 0 0 5px rgba(0, 240, 255, 0.2) !important;
+    transition: all 0.3s ease !important;
+}
+
+.modernInput:focus {
+    border-color: var(--neon-cyan) !important;
+    box-shadow: inset 0 0 10px rgba(0, 240, 255, 0.4), 0 0 8px rgba(0, 240, 255, 0.4) !important;
+}
+
+.neonBorder {
+    border: 1px solid var(--neon-cyan);
+    box-shadow: var(--border-glow);
 }
 
 * {
@@ -53,48 +146,68 @@ main {
     max-width: 20%;
     max-height: 18.4%;
     transform: translate(-50%, -50%);
-    color: white;
-    background-color: aliceblue;
+    color: var(--text-main);
+    background-color: var(--bg-primary);
     background-image: url('/assets/media/images/pokebola-background.png');
     background-size:contain;
     background-position: center;
     background-repeat: no-repeat;
     font-size: clamp(0.4rem, 1.5vw, 1.6rem);
     z-index: 100;
-    border-radius: 6px;
-    overflow: auto;
-    gap: 1%;
+    border-radius: 8px;
+    border: 1px solid var(--neon-cyan);
+    box-shadow: var(--border-glow);
+    overflow: hidden;
+    gap: 3%;
     padding: 0.3%;
 }
 
+.home::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(5, 10, 15, 0.432);
+    backdrop-filter: blur(5px);
+    z-index: -1;
+}
+
 .pokeCard {
-    width: 32%;
-    height: 32%;
+    min-width: 30%;
+    max-width: 30%;
+    min-height: 25%;
+    max-height: 25%;
     background-color: transparent;
     display: flex;
-    color: black;
+    color: var(--text-main);
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    border: 1px solid black;
+    border: 1px solid var(--neon-cyan-dim);
     margin-bottom: 1%;
+    border-radius: 6px;
+    transition: all 0.2s ease-in-out;
 }
 
 .pokeCard p {
-    font-size: clamp(0.2rem, 2vw, 1.4rem);
-    background-color: rgba(255, 255, 255, 0.8);
+    font-size: clamp(0.2rem, 1vw, 1.4rem);
     text-align: center;
+    font-family: 'Inter', sans-serif;
 }
 
-.pokeCard:hover {
-    background-color: rgba(255, 255, 255, 0.8);
+.pokeCard:hover, .pokeCard.hovered {
+    background-color: rgba(0, 240, 255, 0.1);
+    border-color: var(--neon-cyan);
+    box-shadow: var(--border-glow);
     transform: scale(1.05);
-    transition: all 0.2s ease-in-out;
 }
 
 .pokeCard img {
     width: 80%;
-    height: auto;
+    aspect-ratio: 1 / 1;
+    object-fit: contain;
 }
 
 #searchInput {
@@ -107,8 +220,26 @@ main {
     padding: 0.5% 1%;
     font-size: clamp(0.2rem, 1vw, 1.2rem);
     border-radius: 30px;
-    border: 2px solid black;
-    box-shadow: inset 0 0 3px -0.5px var(--txt-500);
+    border: 1px solid var(--neon-cyan);
+    background: rgba(0, 0, 0, 0.8);
+    color: var(--neon-cyan);
+    box-shadow: inset 0 0 5px var(--neon-cyan-dim), var(--border-glow);
+    font-family: 'Rajdhani', sans-serif;
+    outline: none;
+}
+
+.searchInputBg{
+    position: absolute;
+    top: 66.2%;
+    left: 32.4%;
+    width: 12.5%;
+    height: 3%;
+    transform: translate(-50%, -50%);
+    border-radius: 30px;
+    border: 1px solid var(--neon-cyan);
+    background: rgba(0, 0, 0, 0.8);
+    background-color: #000;
+    box-shadow: inset 0 0 5px var(--neon-cyan-dim), var(--border-glow);
 }
 
 #okButton {
@@ -227,7 +358,7 @@ main {
     border-radius: 50%;
     border: 2px solid #333;
 
-    font-size: clamp(0.8rem, 1.2vw, 1.5rem);
+    font-size: clamp(0.2rem, 1vw, 1.5rem);
     background: radial-gradient(circle at 30% 30%, #e0e0e0, #b0b0b0 60%, #808080);
     color: black;
     cursor: pointer;
@@ -265,7 +396,7 @@ main {
 .dpad {
     position: absolute;
     top: 65%;
-    left: 38.5%;
+    left: 39.5%;
     width: 8%;
     height: 11%;
     filter: contrast(1.1);
@@ -299,14 +430,14 @@ main {
 }
 
 .left {
-    left: 0;
+    left: 2%;
     top: 35%;
     width: 40%;
     height: 33%;
 }
 
 .right {
-    right: 0;
+    right: 2%;
     top: 35%;
     width: 40%;
     height: 33%;
@@ -395,6 +526,112 @@ main {
     border-color: transparent transparent transparent #555;
 }
 
+.nameVisor {
+    position: absolute;
+    top: 74.7%;
+    left: 31.1%;
+    transform: translate(-50%, -50%);
+    width: 14.6%;
+    height: 8.5%;
+    border-radius: 0.5rem;
+    border: 1px solid var(--neon-cyan);
+    background: rgba(0, 0, 0, 0.8);
+    box-shadow: inset 0 0 5px var(--neon-cyan-dim), var(--border-glow);
+}
+
+@media (max-width: 768px) {
+    .up::after {
+        border-width: 0 3px 5px 3px;
+    }
+    .down::after {
+        border-width: 5px 3px 0 3px;
+    }
+    .left::after {
+        border-width: 3px 5px 3px 0;
+    }
+    .right::after {
+        border-width: 3px 0 3px 5px;
+    }
+
+    #muteButton {
+        font-size: clamp(0.2rem, 1vw, 1.5rem);
+    }
+
+    #okButton {
+        font-size: clamp(0.2rem, 1vw, 1.5rem);
+        box-shadow:
+            0 1.5px 0 #666,
+            0 2px 5px rgba(0, 0, 0, 0.4),
+            inset 0 1px 2px rgba(255, 255, 255, 0.8),
+            inset 0 -1.5px 3px rgba(0, 0, 0, 0.3);
+    }  
+
+    #backButton {
+        font-size: clamp(0.2rem, 1vw, 1.5rem);
+        box-shadow:
+            0 1.5px 0 #5a0000,
+            0 2px 5px rgba(0, 0, 0, 0.4),
+            inset 0 1px 2px rgba(255, 255, 255, 0.6),
+            inset 0 -1.5px 3px rgba(0, 0, 0, 0.4);
+    }
+
+    #okButton:hover {
+        transform: translate(-50%, -51%);
+        box-shadow:
+            0 2px 0 #666,
+            0 3px 6px rgba(0, 0, 0, 0.5),
+            inset 0 1.5px 3px rgba(255, 255, 255, 0.9),
+            inset 0 -2px 3px rgba(0, 0, 0, 0.35);
+    }
+
+    #okButton:active {
+        transform: translate(-50%, -48%);
+        box-shadow:
+            0 0.5px 0 #666,
+            0 1px 2px rgba(0, 0, 0, 0.4),
+            inset 0 1.5px 3px rgba(0, 0, 0, 0.4),
+            inset 0 -0.5px 1px rgba(255, 255, 255, 0.6);
+    }
+
+    #backButton:hover {
+        transform: translate(-50%, -51%);
+        box-shadow:
+            0 2px 0 #5a0000,
+            0 3px 6px rgba(0, 0, 0, 0.5),
+            inset 0 1.5px 3px rgba(255, 255, 255, 0.9),
+            inset 0 -2px 3px rgba(0, 0, 0, 0.35);
+    }
+
+    #backButton:active {
+        transform: translate(-50%, -48%);
+        box-shadow:
+            0 0.5px 0 #666,
+            0 1px 2px rgba(0, 0, 0, 0.4),
+            inset 0 1.5px 3px rgba(0, 0, 0, 0.4),
+            inset 0 -0.5px 1px rgba(255, 255, 255, 0.6);
+    }
+
+    #leftButton {
+        font-size: clamp(0.2rem, 1vw, 1.5rem);
+    }  
+
+    #rightButton {
+        font-size: clamp(0.2rem, 1vw, 1.5rem);
+    }  
+
+    #upButton {
+        font-size: clamp(0.2rem, 1vw, 1.5rem);
+    }  
+
+    #downButton {
+        font-size: clamp(0.2rem, 1vw, 1.5rem);
+    }  
+
+    #centerButton {
+        font-size: clamp(0.2rem, 1vw, 1.5rem);
+    }  
+}
+
 .dpad:hover {
     filter: brightness(1.1) contrast(1.05);
 }
@@ -412,7 +649,7 @@ main {
 
 
 .PokeId {
-    font-size: clamp(0.4rem, 1.5vw, 1.6rem);
+    font-size: clamp(0.4rem, 1vw, 1.6rem);
     position: absolute;
     top: 75%;
     left: 31%;
@@ -424,23 +661,40 @@ main {
 /* classe que estiliza o padrao geral que mantem o visor direito com tamanhos e posicionamentos corretos */
 .visorDireito {
     padding: 1% 1.5% 1% 1.5%;
-        font-size: clamp(0.4rem, 1.5vw, 1.6rem);
-        position: absolute;
-        top: 57.3%;
-        left: 67.4%;
-        width: 23%;
-        height: 43%;
-        background: radial-gradient(ellipse at top, #113622 0%, #050a08 100%);
-        transform: translate(-50%, -50%);
-        color: var(--txt-200);
-        border: 2px solid black;
-        box-shadow: inset 0 0 3px -0.5px var(--txt-500);
-        border-radius: 6px;
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-        overflow: hidden;
-        z-index: 10;
+    font-size: clamp(0.4rem, 1.5vw, 1.6rem);
+    position: absolute;
+    top: 57.3%;
+    left: 67.4%;
+    width: 23%;
+    height: 43%;
+    background: linear-gradient(135deg, rgba(5,10,15,0.9) 0%, rgba(10,25,35,0.8) 100%);
+    backdrop-filter: blur(10px);
+    transform: translate(-50%, -50%);
+    color: var(--text-main);
+    border: 1px solid var(--neon-cyan);
+    box-shadow: inset 0 0 10px rgba(0, 240, 255, 0.2), 0 0 15px rgba(0, 240, 255, 0.2);
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    overflow: hidden;
+    z-index: 10;
+    background-image: url('../assets/media/images/visor-dreito-bg.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.visorDireito::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(5, 10, 15, 0.281);
+    backdrop-filter: blur(5px);
+    z-index: -1;
 }
 
 .visorDireito.hidden, .home.hidden{
@@ -463,11 +717,10 @@ main {
 }
 
 .PokeInfo .name {
-
     font-size: medium;
     display: flex;
     justify-content: space-between;
-    border-bottom: #10b981 1px solid;
+    border-bottom: 1px solid var(--neon-cyan);
 }
 
 .PokeInfo div {
@@ -540,13 +793,14 @@ main {
 
 .genera {
     font-style: italic;
-    border-bottom: #10b981 1px solid;
+    border-bottom: 1px solid var(--neon-cyan-dim);
+    color: var(--text-muted);
 }
 
 .description {
     padding-bottom: 6px;
     text-align: justify;
-    border-bottom: #10b981 1px solid;
+    border-bottom: 1px solid var(--neon-cyan-dim);
 }
 
 .footBar {
@@ -560,7 +814,10 @@ main {
     width: 98%;
     margin: auto;
     padding-bottom: 8%;
-    background: radial-gradient(ellipse at top, #113622 0%, #050a08 100%);    border-radius: 0 0 6px 6px;
+    background: rgba(5, 10, 15, 0.8);
+    backdrop-filter: blur(5px);
+    border-top: 1px solid var(--neon-cyan-dim);
+    border-radius: 0 0 8px 8px;
 }
 
 .footBar nav {
@@ -582,7 +839,8 @@ main {
 }
 
 .navItem.active {
-    color: rgb(213, 255, 61);
+    color: #00FFB2;
+    border-bottom: 2px solid #00FFB2;
 }
 
 .PokeInfo {
@@ -618,17 +876,50 @@ main {
 .progressContainer {
     width: 65%;
     height: 50%;
-    background-color: #ddd;
+    background-color: rgba(255, 255, 255, 0.1);
+    border: 1px solid var(--neon-cyan-dim);
     border-radius: 5px;
     overflow: hidden;
     position: relative;
+    box-shadow: inset 0 0 5px rgba(0,0,0,0.5);
 }
 
 .progressBar {
     height: 100%;
-    background-color: #10b981;
+    background-color: var(--neon-cyan);
     border-radius: 5px;
     transition: width 0.3s ease-in-out;
+    box-shadow: 0 0 8px rgba(255,255,255,0.4);
+}
+
+.progressBar.hp{
+    background-color: #00FFB2;
+    box-shadow: 0 0 8px #00FFB2;
+}
+
+.progressBar.atk{
+    background-color: #FF0055;
+    box-shadow: 0 0 8px #FF0055;
+}
+
+.progressBar.defense{
+    background-color: #00F0FF;
+    box-shadow: 0 0 8px #00F0FF;
+}
+
+.progressBar.spatk{
+    background-color: #FFB800;
+    box-shadow: 0 0 8px #FFB800;
+}
+
+.progressBar.spdef{
+    background-color: #B026FF;
+    box-shadow: 0 0 8px #B026FF;
+}
+
+.progressBar.speed{
+    background-color: #00FFAA;
+    box-shadow: 0 0 8px #00FFAA;
 }
 
 .pokeMoves p {
@@ -664,9 +955,12 @@ main {
     justify-content: space-between;
     align-items: center;
     padding: 5px;
-    background-color: #113622;
+    background-color: rgba(10, 20, 30, 0.6);
+    border: 1px solid var(--neon-cyan-dim);
+    box-shadow: 0 0 5px rgba(0, 240, 255, 0.1);
     border-radius: 4px;
     height: 100%;
+    color: var(--text-main);
 }
 
 .moveItem .typeIcon{
@@ -734,23 +1028,26 @@ main {
     flex-direction: column;
     align-items: center;
     gap: 0;
-    border-bottom: 1px solid var(--txt-300);
+    border-bottom: 1px solid var(--neon-cyan-dim);
 }
 
 .evoTitle {
     font-size: clamp(0.3rem, 0.8vw, 1.2rem);
     text-align: center;
-    color: var(--txt-100);
+    color: var(--neon-cyan);
+    font-family: 'Rajdhani', sans-serif;
 }
 
 .evoName {
     margin-top: 5%;
+    font-family: 'Orbitron', sans-serif;
+    color: var(--text-main);
 }
 
 .evoDetails {
     font-size: clamp(0.2rem, 0.8vw, 1.2rem);
     text-align: center;
-    color: var(--txt-300);
+    color: var(--text-muted);
     margin-bottom: 5%;
 }
 
