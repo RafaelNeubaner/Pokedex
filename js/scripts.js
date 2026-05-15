@@ -21,6 +21,8 @@ const homeSection = document.querySelector('.home');
 let isMuted = false;
 //controle de pagonação
 let selectedCardIndex = 0;
+// Traduções
+let pokemon_flavor_texts = null;
 
 //função para buscar os dados do pokemon na API
 const fetchPokemonData = async (pokemon) => {
@@ -370,9 +372,17 @@ async function pokeInfo(pokemon) {
     temp = await fetch(url);
     const speciesData = await temp.json();
     const generaEntry = speciesData.genera.find(entry => entry.language.name === 'en');
-    const flavorTextEntry = speciesData.flavor_text_entries.find(entry => entry.language.name === 'en');
+    
+    let flavorText = 'Nenhuma descrição disponível.';
+    if (pokemon_flavor_texts && pokemon_flavor_texts[pokemon.id]) {
+        flavorText = pokemon_flavor_texts[pokemon.id].flavor_text;
+    } else {
+        const flavorTextEntry = speciesData.flavor_text_entries.find(entry => entry.language.name === 'en');
+        if (flavorTextEntry) flavorText = flavorTextEntry.flavor_text.replace(/\f/g, ' ');
+    }
+
     document.getElementsByClassName('genera')[0].textContent = generaEntry ? generaEntry.genus : 'Categoria não disponível.';
-    document.getElementsByClassName('description')[0].textContent = flavorTextEntry ? flavorTextEntry.flavor_text.replace(/\f/g, ' ') : 'Nenhuma descrição disponível.';
+    document.getElementsByClassName('description')[0].textContent = flavorText;
     document.getElementsByClassName('altura')[0].textContent = ` ${pokemon.height / 10} m`;
     document.getElementsByClassName('peso')[0].textContent = ` ${pokemon.weight / 10} kg`;
     infoSection.classList.remove('hidden');
@@ -698,8 +708,18 @@ const loadHomePage = async (offset = 0, limit = 6, initialSelectedIndex = 0) => 
   }
 }
 
-// Carrega a página inicial com os primeiros 6 pokemons
-loadHomePage();
+// Inicia o app carregando as traduções e depois a página inicial
+async function initApp() {
+  try {
+    const response = await fetch('pokemon_flavor_texts.json');
+    pokemon_flavor_texts = await response.json();
+  } catch (error) {
+    console.error('Failed to load translated texts:', error);
+  }
+  loadHomePage();
+}
+
+initApp();
 
 // Lógica para os botões de navegação da home
 let currentOffset = 0;
