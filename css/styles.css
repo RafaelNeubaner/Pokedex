@@ -732,10 +732,13 @@ main {
 }
 
 .typeContainer {
-    min-width: 85%;
+    min-width: 64%;
+    max-width: 64%;
+    min-height: 4%;
+    max-height: 4%;
     position: absolute;
     top: 16%;
-    left: 10%;
+    left: 31%;
 }
 
 .typeContainer, .weaknessContainer, .effectivenessContainer {
@@ -1126,4 +1129,17 @@ main {
 
 .reset {
     z-index: 1;
+}
+
+@media (max-width: 996px) {
+    .weaknessContainer {
+        top:25% !important;
+    }
+    .effectivenessContainer {
+        top:36.5% !important;
+    }
+    .weakness .typeIcon, .effectiveness .typeIcon{
+        min-width: 25% !important;
+        max-width: 25% !important;
+    }
 }
