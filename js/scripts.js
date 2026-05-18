@@ -486,14 +486,14 @@ async function pokeMoves(pokemon) {
     }
 
     if (enName) {
-      let enText = enName.replace(/[\f\n\r]/g, ' ');
+      let enName2 = enName.replace(/[\f\n\r]/g, ' ');
       document.getElementsByClassName('description')[0].textContent = 'Traduzindo...';
       try {
-        const res = await fetch(`/api/translate?text=${encodeURIComponent(enText)}`);
+        const res = await fetch(`/api/translate?text=${encodeURIComponent(enName2)}`);
         const data = await res.json();
-        enName = data.translated || enText;
+        enName = data.translated || enName2;
       } catch (e) {
-        enName = enText;
+        enName = enName2;
       }
     }
 
@@ -509,7 +509,7 @@ async function pokeMoves(pokemon) {
           if (el) el.textContent = enDesc;
         });
     }
-    
+
     infoSection.classList.add('hidden');
     statsSection.classList.add('hidden');
     movesSection.classList.remove('hidden');
