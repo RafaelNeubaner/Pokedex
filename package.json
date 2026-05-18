@@ -1,6 +1,7 @@
 {
   "name": "pokedex",
   "version": "1.0.0",
+  "type": "module",
   "main": "generate_flavors.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"

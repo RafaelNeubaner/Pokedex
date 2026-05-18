@@ -1,7 +1,6 @@
-const { translate } = require('@vitalets/google-translate-api');
+import { translate } from '@vitalets/google-translate-api';
 
-module.exports = async (req, res) => {
-  // Allow CORS for local development (Vercel usually handles this, but good to have)
+export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Credentials', true);
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,PATCH,DELETE,POST,PUT');
@@ -34,4 +33,4 @@ module.exports = async (req, res) => {
     console.error('Translation error:', error);
     res.status(500).json({ error: 'Translation failed', details: error.message });
   }
-};
+}
