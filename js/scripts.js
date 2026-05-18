@@ -372,7 +372,17 @@ async function pokeInfo(pokemon) {
     temp = await fetch(url);
     const speciesData = await temp.json();
     const generaEntry = speciesData.genera.find(entry => entry.language.name === 'en');
-    
+    if (generaEntry) {
+      let enText = generaEntry.genus.replace(/[\f\n\r]/g, ' ');
+      document.getElementsByClassName('description')[0].textContent = 'Traduzindo...';
+      try {
+        const res = await fetch(`/api/translate?text=${encodeURIComponent(enText)}`);
+        const data = await res.json();
+        generaEntry.genus = data.translated || enText;
+      } catch (e) {
+        generaEntry.genus = enText;
+      }
+    }
     let flavorText = 'Nenhuma descrição disponível.';
     if (pokemon_flavor_texts && pokemon_flavor_texts[pokemon.id]) {
         flavorText = pokemon_flavor_texts[pokemon.id].flavor_text;
@@ -447,10 +457,35 @@ async function pokeMoves(pokemon) {
       let enDesc = moveData.flavor_text_entries.find(entry => entry.language.name === 'en')?.flavor_text.replace(/[\f\n\r]/g, ' ') || '';
       let displayDesc = enDesc ? 'Traduzindo...' : 'Nenhuma descrição disponível.';
       let descId = `move-desc-${pokemon.id}-${i}`;
+      let enName = moveData.names.find(name => name.language.name === 'en')?.name || 'Desconhecido';
+      if (enName) {
+        let enText = enName.replace(/[\f\n\r]/g, ' ');
+        document.getElementsByClassName('description')[0].textContent = 'Traduzindo...';
+        try {
+          const res = await fetch(`/api/translate?text=${encodeURIComponent(enText)}`);
+          const data = await res.json();
+          enName = data.translated || enText;
+        } catch (e) {
+          enName = enText;
+        }
+      }
+
+      if (enDesc) {
+        fetch(`/api/translate?text=${encodeURIComponent(enDesc)}`)
+          .then(res => res.json())
+          .then(data => {
+            const el = document.getElementById(descId);
+            if (el) el.textContent = data.translated || enDesc;
+          })
+          .catch(() => {
+            const el = document.getElementById(descId);
+            if (el) el.textContent = enDesc;
+          });
+      }
 
       movesList.innerHTML += `<li class="moveItem card glow">
                 <div class="moveTitle">
-                  <p>${moveData.names.find(name => name.language.name === 'en')?.name || 'Desconhecido'}</p>
+                  <p>${enName || 'Desconhecido'}</p>
                   <span class="moveType">
                     <img
                       src=${typeData.sprites['generation-viii']['brilliant-diamond-shining-pearl'].name_icon}
@@ -465,24 +500,13 @@ async function pokeMoves(pokemon) {
                   </p>
                 </div>
                 <div class="moveStats">
-                  <p class="power">Poder: ${moveData.power || 'N/A'}</p>
-                  <p class="acuracy">Prec: ${moveData.accuracy ? `${moveData.accuracy}%` : 'N/A'}</p>
+                  <p class="power">Pdr: ${moveData.power || 'N/A'}</p>
+                  <p class="acuracy">Prc: ${moveData.accuracy ? `${moveData.accuracy}%` : 'N/A'}</p>
                   <p class="pp">PP: ${moveData.pp || 'N/A'}</p>
                 </div>
               </li>`;
 
-      if (enDesc) {
-        fetch(`/api/translate?text=${encodeURIComponent(enDesc)}`)
-          .then(res => res.json())
-          .then(data => {
-            const el = document.getElementById(descId);
-            if (el) el.textContent = data.translated || enDesc;
-          })
-          .catch(() => {
-            const el = document.getElementById(descId);
-            if (el) el.textContent = enDesc;
-          });
-      }
+      
     }
     infoSection.classList.add('hidden');
     statsSection.classList.add('hidden');
