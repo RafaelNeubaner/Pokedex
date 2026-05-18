@@ -453,15 +453,17 @@ async function pokeMoves(pokemon) {
       let typeUrl = moveData.type.url;
       temp = await fetch(typeUrl);
       let typeData = await temp.json();
-      
       let enDesc = moveData.flavor_text_entries.find(entry => entry.language.name === 'en')?.flavor_text.replace(/[\f\n\r]/g, ' ') || '';
       let displayDesc = enDesc ? 'Traduzindo...' : 'Nenhuma descrição disponível.';
       let descId = `move-desc-${pokemon.id}-${i}`;
-      let enName = moveData.names.find(name => name.language.name === 'en')?.name || 'Desconhecido';
+      
+      let enName = moveData.names.find(name => name.language.name === 'en')?.name || '';
+      let displayName = enName ? 'Traduzindo...' : 'Desconhecido';
+      let nameId = `move-name-${pokemon.id}-${i}`;
 
       movesList.innerHTML += `<li class="moveItem card glow">
                 <div class="moveTitle">
-                  <p>${enName || 'Desconhecido'}</p>
+                  <p id="${nameId}">${displayName}</p>
                   <span class="moveType">
                     <img
                       src=${typeData.sprites['generation-viii']['brilliant-diamond-shining-pearl'].name_icon}
@@ -482,32 +484,31 @@ async function pokeMoves(pokemon) {
                 </div>
               </li>`;
 
-      
-    }
-
-    if (enName) {
-      let enName2 = enName.replace(/[\f\n\r]/g, ' ');
-      document.getElementsByClassName('description')[0].textContent = 'Traduzindo...';
-      try {
-        const res = await fetch(`/api/translate?text=${encodeURIComponent(enName2)}`);
-        const data = await res.json();
-        enName = data.translated || enName2;
-      } catch (e) {
-        enName = enName2;
+      if (enName) {
+        fetch(`/api/translate?text=${encodeURIComponent(enName)}`)
+          .then(res => res.json())
+          .then(data => {
+            const el = document.getElementById(nameId);
+            if (el) el.textContent = data.translated || enName;
+          })
+          .catch(() => {
+            const el = document.getElementById(nameId);
+            if (el) el.textContent = enName;
+          });
       }
-    }
 
-    if (enDesc) {
-      fetch(`/api/translate?text=${encodeURIComponent(enDesc)}`)
-        .then(res => res.json())
-        .then(data => {
-          const el = document.getElementById(descId);
-          if (el) el.textContent = data.translated || enDesc;
-        })
-        .catch(() => {
-          const el = document.getElementById(descId);
-          if (el) el.textContent = enDesc;
-        });
+      if (enDesc) {
+        fetch(`/api/translate?text=${encodeURIComponent(enDesc)}`)
+          .then(res => res.json())
+          .then(data => {
+            const el = document.getElementById(descId);
+            if (el) el.textContent = data.translated || enDesc;
+          })
+          .catch(() => {
+            const el = document.getElementById(descId);
+            if (el) el.textContent = enDesc;
+          });
+      }
     }
 
     infoSection.classList.add('hidden');
