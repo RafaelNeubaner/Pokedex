@@ -290,6 +290,11 @@ const resetPokedex = () => {
   evosSection.classList.add('hidden');
   homeSection.classList.remove('hidden');
 
+  // Restaurar visorDireito reset ao estado inicial
+  const visorReset = document.querySelector('.visorDireito.reset');
+  const visorResetText = visorReset?.querySelector('.textCenter');
+  if (visorReset) visorReset.classList.remove('hidden');
+  if (visorResetText) visorResetText.textContent = 'Selecione um pokémon';
 };
 
 backButton.addEventListener('click', resetPokedex);
@@ -302,7 +307,19 @@ async function pokeInfo(pokemon) {
     return;
   }
 
+  const visorReset = document.querySelector('.visorDireito.reset');
+  const visorResetText = visorReset?.querySelector('.textCenter');
+
   if (pokemon && pokemon.name) {
+    // Mostrar loading no visor direito enquanto carrega
+    if (visorReset) {
+      visorReset.classList.remove('hidden');
+      if (visorResetText) visorResetText.textContent = 'Carregando...';
+    }
+    infoSection.classList.add('hidden');
+    statsSection.classList.add('hidden');
+    movesSection.classList.add('hidden');
+    evosSection.classList.add('hidden');
     // Reproduzir som do Pokémon ao selecioná-lo
     playPokemonSound(pokemon.id);
 
@@ -405,6 +422,12 @@ async function pokeInfo(pokemon) {
     document.getElementsByClassName('description')[0].textContent = flavorText;
     document.getElementsByClassName('altura')[0].textContent = ` ${pokemon.height / 10} m`;
     document.getElementsByClassName('peso')[0].textContent = ` ${pokemon.weight / 10} kg`;
+
+    // Esconder loading e mostrar as informações
+    if (visorReset) {
+      visorReset.classList.add('hidden');
+      if (visorResetText) visorResetText.textContent = 'Selecione um pokémon';
+    }
     infoSection.classList.remove('hidden');
     statsSection.classList.add('hidden');
     movesSection.classList.add('hidden');
