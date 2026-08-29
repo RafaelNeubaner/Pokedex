@@ -304,8 +304,10 @@ const resetPokedex = () => {
   const pokemonName = document.getElementById('PokemonName');
   const pokemonNumber = document.getElementById('PokemonNumber');
   const pokemonSpecies = document.querySelectorAll('.PokemonSpecies');
+  const pokemonGif = document.getElementById('PokemonGif');
   if (pokemonName) pokemonName.innerHTML = '';
   if (pokemonNumber) pokemonNumber.innerHTML = '';
+  if (pokemonGif) pokemonGif.src = '';
   pokemonSpecies.forEach(el => { el.textContent = ''; });
 
   if (infoSection) infoSection.classList.add('hidden');
@@ -497,6 +499,16 @@ async function pokeMoves(pokemon) {
     const movesList = document.querySelector('.moveList');
     if (!movesList) return;
     movesList.innerHTML = '';
+    const visorReset = document.querySelector('.visorDireito.reset');
+    const visorResetText = visorReset?.querySelector('.textCenter');
+    if (visorReset) {
+      visorReset.classList.remove('hidden');
+      if (visorResetText) visorResetText.innerHTML = '<img src="/assets/media/images/pikachu.gif" alt="Loading..." style="height: 100px; object-fit: contain;" />';
+    }
+    infoSection.classList.add('hidden');
+    statsSection.classList.add('hidden');
+    movesSection.classList.add('hidden');
+    evosSection.classList.add('hidden');
     for (let i = 0; i < Math.min(pokemon.moves.length, 10); i++) {
       let url = pokemon.moves[i].move.url;
       let temp = await fetch(url);
@@ -535,6 +547,10 @@ async function pokeMoves(pokemon) {
               </li>`;
     }
 
+    if (visorReset) {
+      visorReset.classList.add('hidden');
+      if (visorResetText) visorResetText.textContent = 'Select a Pokémon';
+    }
     infoSection.classList.add('hidden');
     statsSection.classList.add('hidden');
     movesSection.classList.remove('hidden');
@@ -550,6 +566,16 @@ async function pokeEvos(pokemon) {
     const evosList = document.querySelector('.evoList');
     if (!evosList) return;
     evosList.innerHTML = '';
+    const visorReset = document.querySelector('.visorDireito.reset');
+    const visorResetText = visorReset?.querySelector('.textCenter');
+    if (visorReset) {
+      visorReset.classList.remove('hidden');
+      if (visorResetText) visorResetText.innerHTML = '<img src="/assets/media/images/pikachu.gif" alt="Loading..." style="height: 100px; object-fit: contain;" />';
+    }
+    infoSection.classList.add('hidden');
+    statsSection.classList.add('hidden');
+    movesSection.classList.add('hidden');
+    evosSection.classList.add('hidden');
     let url = pokemon.species.url;
     let temp = await fetch(url);
     let speciesData = await temp.json();
@@ -713,6 +739,10 @@ async function pokeEvos(pokemon) {
         }
       }
 
+      if (visorReset) {
+        visorReset.classList.add('hidden');
+        if (visorResetText) visorResetText.textContent = 'Select a Pokémon';
+      }
       infoSection.classList.add('hidden');
       statsSection.classList.add('hidden');
       movesSection.classList.add('hidden');
@@ -742,12 +772,17 @@ const playPokemonSound = (pokemonId) => {
 const loadHomePage = async (offset = 0, limit = 6, initialSelectedIndex = 0) => {
   const homeContainer = document.querySelector('.home');
   if (!homeContainer) return;
-  homeContainer.innerHTML = '';
+  
+  // Show loading pokemon GIF alone
+  homeContainer.innerHTML = '<div style="width: 100%; height: 100%; display: flex; justify-content: center; align-items: center; grid-column: 1 / -1; grid-row: 1 / -1;"><img src="/assets/media/images/pikachu.gif" alt="Loading..." style="height: 100px; object-fit: contain;" /></div>';
+  
   try {
     const response = await fetch(`https://pokeapi.co/api/v2/pokemon?offset=${offset}&limit=${limit}`);
     if (!response.ok) return;
     const data = await response.json();
     const pokemonList = data.results || [];
+    const cards = [];
+    
     for (let index = 0; index < pokemonList.length; index++) {
       const pokemon = pokemonList[index];
       const pokemonData = await fetchPokemonData(pokemon.name);
@@ -783,18 +818,23 @@ const loadHomePage = async (offset = 0, limit = 6, initialSelectedIndex = 0) => 
         updateSelectedCard(selectedCardIndex);
       });
 
-      homeContainer.appendChild(pokemonCard);
       if (index === initialSelectedIndex) {
         setCardHoveredState(pokemonCard, true);
         selectedCardIndex = index;
       } else {
         setCardHoveredState(pokemonCard, false);
       }
+      
+      cards.push(pokemonCard);
     }
 
+    // Hide loading GIF and show the 6 pokemons
+    homeContainer.innerHTML = '';
+    cards.forEach(card => homeContainer.appendChild(card));
     updateSelectedCard(initialSelectedIndex);
   } catch (error) {
     console.error('Error loading home page:', error);
+    homeContainer.innerHTML = '<p class="textCenter alignCenter" style="color: white; grid-column: 1 / -1;">Error loading data.</p>';
   }
 };
 
