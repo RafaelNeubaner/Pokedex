@@ -17,14 +17,13 @@ const movesSection = document.querySelector('.pokeMoves');
 const evosSection = document.querySelector('.pokeEvos');
 const homeSection = document.querySelector('.home');
 
-// Controle de áudio
+// Audio control
 let isMuted = false;
-//controle de pagonação
+// Pagination control
 let selectedCardIndex = 0;
-// Traduções
-let pokemon_flavor_texts = null;
+let currentOffset = 0;
 
-//função para buscar os dados do pokemon na API
+// Function to fetch Pokemon data from PokeAPI
 const fetchPokemonData = async (pokemon) => {
   try {
     const response = await fetch(`https://pokeapi.co/api/v2/pokemon/${pokemon.toLowerCase()}`);
@@ -35,40 +34,48 @@ const fetchPokemonData = async (pokemon) => {
     return data;
   } catch (error) {
     console.error(error);
-    alert('Pokémon não encontrado. Tente novamente.');
+    alert('Pokemon not found. Please try again.');
   }
-}
+};
 
-//botoes do footer
+// Footer buttons
 infosButton.forEach(button => {
   button.addEventListener('click', async () => {
-    let pokemonName = document.querySelector('.PokemonSpecies').textContent;
-    const pokemon = await fetchPokemonData(pokemonName);
-    pokeInfo(pokemon);
+    let pokemonName = document.querySelector('.PokemonSpecies')?.textContent;
+    if (pokemonName) {
+      const pokemon = await fetchPokemonData(pokemonName);
+      pokeInfo(pokemon);
+    }
   });
 });
 
 statsButton.forEach(button => {
   button.addEventListener('click', async () => {
-    let pokemonName = document.querySelector('.PokemonSpecies').textContent;
-    const pokemon = await fetchPokemonData(pokemonName);
-    pokeStats(pokemon);
+    let pokemonName = document.querySelector('.PokemonSpecies')?.textContent;
+    if (pokemonName) {
+      const pokemon = await fetchPokemonData(pokemonName);
+      pokeStats(pokemon);
+    }
   });
 });
 
 movesButton.forEach(button => {
   button.addEventListener('click', async () => {
-    let pokemonName = document.querySelector('.PokemonSpecies').textContent;
-    const pokemon = await fetchPokemonData(pokemonName);
-    pokeMoves(pokemon);
+    let pokemonName = document.querySelector('.PokemonSpecies')?.textContent;
+    if (pokemonName) {
+      const pokemon = await fetchPokemonData(pokemonName);
+      pokeMoves(pokemon);
+    }
   });
 });
 
 evosButton.forEach(button => {
   button.addEventListener('click', async () => {
-    let pokemonName = document.querySelector('.PokemonSpecies').textContent;
-    const pokemon = await fetchPokemonData(pokemonName);
-    pokeEvos(pokemon);
+    let pokemonName = document.querySelector('.PokemonSpecies')?.textContent;
+    if (pokemonName) {
+      const pokemon = await fetchPokemonData(pokemonName);
+      pokeEvos(pokemon);
+    }
   });
 });
 
@@ -77,7 +84,7 @@ const limit = 6;
 
 const getHomeCards = () => Array.from(document.querySelectorAll('.home .pokeCard'));
 
-//aplica a classe hovered no card
+// Apply hovered class to card
 const setCardHoveredState = (card, isHovered) => {
   const cardImage = card.querySelector('.cardImage');
   const defaultImage = card.dataset.defaultImage;
@@ -86,14 +93,14 @@ const setCardHoveredState = (card, isHovered) => {
 
   if (isHovered) {
     card.classList.add('hovered');
-    if (canAnimate && hoverImage) {
+    if (canAnimate && hoverImage && cardImage) {
       cardImage.src = hoverImage;
     }
     return;
   }
 
   card.classList.remove('hovered');
-  if (defaultImage) {
+  if (defaultImage && cardImage) {
     cardImage.src = defaultImage;
   }
 };
@@ -105,13 +112,12 @@ const updateSelectedCard = (newIndex) => {
     return;
   }
 
-  //prevenção de eerros
   const safeIndex = Math.max(0, Math.min(newIndex, cards.length - 1));
   cards.forEach((card, index) => setCardHoveredState(card, index === safeIndex));
   selectedCardIndex = safeIndex;
 };
 
-const isHomeVisible = () => !homeSection.classList.contains('hidden');
+const isHomeVisible = () => homeSection ? !homeSection.classList.contains('hidden') : false;
 
 const goToPage = async (newOffset, selectedIndex) => {
   if (newOffset < 0 || newOffset > maxOffset) {
@@ -123,7 +129,7 @@ const goToPage = async (newOffset, selectedIndex) => {
   return true;
 };
 
-//funções que serão chamadas elo d-pad
+// D-pad movement functions
 const moveSelectionRight = async () => {
   const cards = getHomeCards();
   if (cards.length === 0) {
@@ -195,113 +201,131 @@ const activateSelectedCard = () => {
   }
 };
 
-//botoes d-pad
-leftButton.addEventListener('click', async () => {
-  if (isHomeVisible()) {
-    await moveSelectionLeft();
-  } else {
-    await proxPokemon(-1);
-  }
-});
+// D-pad button listeners
+if (leftButton) {
+  leftButton.addEventListener('click', async () => {
+    if (isHomeVisible()) {
+      await moveSelectionLeft();
+    } else {
+      await proxPokemon(-1);
+    }
+  });
+}
 
-rightButton.addEventListener('click', async () => {
-  if (!isHomeVisible()) {
-    await proxPokemon(1);
-  }
-  await moveSelectionRight();
-});
+if (rightButton) {
+  rightButton.addEventListener('click', async () => {
+    if (!isHomeVisible()) {
+      await proxPokemon(1);
+    }
+    await moveSelectionRight();
+  });
+}
 
-upButton.addEventListener('click', async () => {
-  if (!isHomeVisible()) {
-    await proxPokemon(-3);
-  }
-  await moveSelectionUp();
-});
+if (upButton) {
+  upButton.addEventListener('click', async () => {
+    if (!isHomeVisible()) {
+      await proxPokemon(-3);
+    }
+    await moveSelectionUp();
+  });
+}
 
-downButton.addEventListener('click', async () => {
-  if (!isHomeVisible()) {
-    await proxPokemon(3);
-  }
-  await moveSelectionDown();
-});
+if (downButton) {
+  downButton.addEventListener('click', async () => {
+    if (!isHomeVisible()) {
+      await proxPokemon(3);
+    }
+    await moveSelectionDown();
+  });
+}
 
-centerButton.addEventListener('click', () => {
-  if (!isHomeVisible()) {
-    return;
-  }
-  activateSelectedCard();
-});
+if (centerButton) {
+  centerButton.addEventListener('click', () => {
+    if (!isHomeVisible()) {
+      return;
+    }
+    activateSelectedCard();
+  });
+}
 
-//Função para fazer a busca quando clicar no botão de ok ou pressionar Enter
+// Search Pokemon when clicking ok button or pressing Enter
 const buscarPokemon = async () => {
+  if (!searchInput) return;
   const pokemonName = searchInput.value.trim();
   if (pokemonName) {
     const pokemon = await fetchPokemonData(pokemonName);
     if (pokemon) {
       pokeInfo(pokemon);
       searchInput.value = '';
-      homeSection.classList.add('hidden');
+      if (homeSection) homeSection.classList.add('hidden');
     }
   } else {
-    alert('Por favor, insira o nome de um Pokémon.');
+    alert('Please enter a Pokemon name.');
   }
 };
 
 const proxPokemon = async (offset) => {
-  const pokemonNumber = document.querySelector('.PokemonNumber').textContent;
+  const numElem = document.querySelector('.PokemonNumber');
+  if (!numElem) return;
+  const pokemonNumber = numElem.textContent;
   const pokemonNumberInt = parseInt(pokemonNumber.replace('#', ''));
   const query = (pokemonNumberInt + offset).toString();
   if (query <= 1025 && query > 0) {
     const pokemon = await fetchPokemonData(query);
     pokeInfo(pokemon);
-  } else {
-    return;
   }
+};
+
+// OK button click
+if (okButton) {
+  okButton.addEventListener('click', buscarPokemon);
 }
 
-//logica ao clicar no okbutton
-okButton.addEventListener('click', buscarPokemon);
+// Mute button click
+if (muteButton) {
+  muteButton.addEventListener('click', () => {
+    isMuted = !isMuted;
+    muteButton.textContent = isMuted ? '🔇' : '🔊';
+    muteButton.style.opacity = isMuted ? '0.5' : '1';
+  });
+}
 
-//logica ao clicar no botão de mute
-muteButton.addEventListener('click', () => {
-  isMuted = !isMuted;
-  muteButton.textContent = isMuted ? '🔇' : '🔊';
-  muteButton.style.opacity = isMuted ? '0.5' : '1';
-});
+// Press Enter in search input
+if (searchInput) {
+  searchInput.addEventListener('keypress', (event) => {
+    if (event.key === 'Enter') {
+      buscarPokemon();
+    }
+  });
+}
 
-//logica ao pressionar Enter no input de pesquisa
-searchInput.addEventListener('keypress', (event) => {
-  if (event.key === 'Enter') {
-    buscarPokemon();
-  }
-});
-
-//Função para resetar o Pokedex ao estado inicial
+// Reset Pokedex to initial state
 const resetPokedex = () => {
-  // Limpar o input de pesquisa
   const pokemonName = document.getElementById('PokemonName');
   const pokemonNumber = document.getElementById('PokemonNumber');
-  pokemonNumber.innerHTML = '';
-  pokemonName.innerHTML = '';
-  // esconder o visor direito e mostrar a tela inicial
-  infoSection.classList.add('hidden');
-  statsSection.classList.add('hidden');
-  movesSection.classList.add('hidden');
-  evosSection.classList.add('hidden');
-  homeSection.classList.remove('hidden');
+  const pokemonSpecies = document.querySelectorAll('.PokemonSpecies');
+  if (pokemonName) pokemonName.innerHTML = '';
+  if (pokemonNumber) pokemonNumber.innerHTML = '';
+  pokemonSpecies.forEach(el => { el.textContent = ''; });
 
-  // Restaurar visorDireito reset ao estado inicial
+  if (infoSection) infoSection.classList.add('hidden');
+  if (statsSection) statsSection.classList.add('hidden');
+  if (movesSection) movesSection.classList.add('hidden');
+  if (evosSection) evosSection.classList.add('hidden');
+  if (homeSection) homeSection.classList.remove('hidden');
+
   const visorReset = document.querySelector('.visorDireito.reset');
   const visorResetText = visorReset?.querySelector('.textCenter');
   if (visorReset) visorReset.classList.remove('hidden');
-  if (visorResetText) visorResetText.textContent = 'Selecione um pokémon';
+  if (visorResetText) visorResetText.textContent = 'Select a Pokémon';
 };
 
-backButton.addEventListener('click', resetPokedex);
+if (backButton) {
+  backButton.addEventListener('click', resetPokedex);
+}
 
-//função para carregar e exibir as informações do pokemon selecionado
+// Load and display information for the selected Pokemon
 async function pokeInfo(pokemon) {
-  // contenção de erros
   if (!infoSection || !statsSection || !movesSection || !evosSection) {
     console.error('One or more info sections were not found in the DOM.');
     return;
@@ -311,245 +335,220 @@ async function pokeInfo(pokemon) {
   const visorResetText = visorReset?.querySelector('.textCenter');
 
   if (pokemon && pokemon.name) {
-    // Mostrar loading no visor direito enquanto carrega
     if (visorReset) {
       visorReset.classList.remove('hidden');
-      if (visorResetText) visorResetText.textContent = 'Carregando...';
+      if (visorResetText) visorResetText.textContent = 'Loading...';
     }
     infoSection.classList.add('hidden');
     statsSection.classList.add('hidden');
     movesSection.classList.add('hidden');
     evosSection.classList.add('hidden');
-    // Reproduzir som do Pokémon ao selecioná-lo
+
     playPokemonSound(pokemon.id);
 
-    document.getElementById('PokemonName').textContent = pokemon.name.charAt(0).toUpperCase() + pokemon.name.slice(1);
-    document.getElementById('PokemonNumber').textContent = `#${pokemon.id.toString().padStart(4, '0')}`;
-    if (pokemon.id <= 649) {
-      document.getElementById('PokemonGif').src = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/${pokemon.id}.gif`;
-    } else {
-      document.getElementById('PokemonGif').src = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${pokemon.id}.png`;
-    }
-    document.getElementsByClassName('PokemonSpecies')[0].textContent = pokemon.name.charAt(0).toUpperCase() + pokemon.name.slice(1);
-    document.getElementsByClassName('PokemonNumber')[0].textContent = `#${pokemon.id}`;
+    const nameElem = document.getElementById('PokemonName');
+    const numElem = document.getElementById('PokemonNumber');
+    const gifElem = document.getElementById('PokemonGif');
+    const speciesElem = document.getElementsByClassName('PokemonSpecies')[0];
+    const sideNumElem = document.getElementsByClassName('PokemonNumber')[0];
 
-    // define os containers e limpa os ícones de tipo, fraqueza e eficácia anteriores
+    if (nameElem) nameElem.textContent = pokemon.name.charAt(0).toUpperCase() + pokemon.name.slice(1);
+    if (numElem) numElem.textContent = `#${pokemon.id.toString().padStart(4, '0')}`;
+    if (gifElem) {
+      if (pokemon.id <= 649) {
+        gifElem.src = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/${pokemon.id}.gif`;
+      } else {
+        gifElem.src = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${pokemon.id}.png`;
+      }
+    }
+    if (speciesElem) speciesElem.textContent = pokemon.name.charAt(0).toUpperCase() + pokemon.name.slice(1);
+    if (sideNumElem) sideNumElem.textContent = `#${pokemon.id}`;
+
     const typeContainer = document.querySelector('.typeContainer');
     const weaknessContainer = document.querySelector('.weaknessContainer');
     const effectivenessContainer = document.querySelector('.effectivenessContainer');
-    typeContainer.innerHTML = '';
-    effectivenessContainer.innerHTML = '';
-    weaknessContainer.innerHTML = '';
+    if (typeContainer) typeContainer.innerHTML = '';
+    if (effectivenessContainer) effectivenessContainer.innerHTML = '';
+    if (weaknessContainer) weaknessContainer.innerHTML = '';
 
-    // adiciona o ícone do tipo do Pokémon
-    const typeIcon = document.createElement('img');
-    typeIcon.classList.add('typeIcon');
-    let url = pokemon.types[0].type.url;
-    let temp = await fetch(url);
-    let typeData = await temp.json();
-    typeIcon.src = typeData.sprites['generation-viii']['brilliant-diamond-shining-pearl'].name_icon;
-    typeContainer.appendChild(typeIcon);
-
-    // adiciona os ícones dos tipos que são fracos contra o Pokémon
-    typeData.damage_relations.double_damage_from.forEach(async (type) => {
+    if (pokemon.types && pokemon.types.length > 0) {
       const typeIcon = document.createElement('img');
       typeIcon.classList.add('typeIcon');
-      url = type.url;
-      temp = await fetch(url);
-      typeData = await temp.json();
-      typeIcon.src = typeData.sprites['generation-viii']['brilliant-diamond-shining-pearl'].name_icon;
-      weaknessContainer.appendChild(typeIcon);
-    });
+      let url = pokemon.types[0].type.url;
+      let temp = await fetch(url);
+      let typeData = await temp.json();
+      if (typeData.sprites?.['generation-viii']?.['brilliant-diamond-shining-pearl']?.name_icon) {
+        typeIcon.src = typeData.sprites['generation-viii']['brilliant-diamond-shining-pearl'].name_icon;
+        if (typeContainer) typeContainer.appendChild(typeIcon);
+      }
 
-    // adiciona os ícones dos tipos que são eficazes contra o Pokémon
-    typeData.damage_relations.double_damage_to.forEach(async (type) => {
-      const typeIcon = document.createElement('img');
-      typeIcon.classList.add('typeIcon');
-      url = type.url;
-      temp = await fetch(url);
-      typeData = await temp.json();
-      typeIcon.src = typeData.sprites['generation-viii']['brilliant-diamond-shining-pearl'].name_icon;
-      effectivenessContainer.appendChild(typeIcon);
-    }
-    );
+      if (typeData.damage_relations?.double_damage_from) {
+        typeData.damage_relations.double_damage_from.forEach(async (type) => {
+          const typeIcon = document.createElement('img');
+          typeIcon.classList.add('typeIcon');
+          let url = type.url;
+          let temp = await fetch(url);
+          let subTypeData = await temp.json();
+          if (subTypeData.sprites?.['generation-viii']?.['brilliant-diamond-shining-pearl']?.name_icon) {
+            typeIcon.src = subTypeData.sprites['generation-viii']['brilliant-diamond-shining-pearl'].name_icon;
+            if (weaknessContainer) weaknessContainer.appendChild(typeIcon);
+          }
+        });
+      }
 
-    //verifica se o pokemon tem mais de um tipo e repete o processo para o segundo tipo
-    if (pokemon.types.length > 1) {
-      url = pokemon.types[1].type.url;
-      temp = await fetch(url);
-      typeData = await temp.json();
-      const typeIcon = document.createElement('img');
-      typeIcon.classList.add('typeIcon');
-      typeIcon.src = typeData.sprites['generation-viii']['brilliant-diamond-shining-pearl'].name_icon;
-      document.querySelector('.typeContainer').appendChild(typeIcon);
-    }
+      if (typeData.damage_relations?.double_damage_to) {
+        typeData.damage_relations.double_damage_to.forEach(async (type) => {
+          const typeIcon = document.createElement('img');
+          typeIcon.classList.add('typeIcon');
+          let url = type.url;
+          let temp = await fetch(url);
+          let subTypeData = await temp.json();
+          if (subTypeData.sprites?.['generation-viii']?.['brilliant-diamond-shining-pearl']?.name_icon) {
+            typeIcon.src = subTypeData.sprites['generation-viii']['brilliant-diamond-shining-pearl'].name_icon;
+            if (effectivenessContainer) effectivenessContainer.appendChild(typeIcon);
+          }
+        });
+      }
 
-    //carrega o restante dos dados do pokemon
-    url = pokemon.species.url;
-    temp = await fetch(url);
-    const speciesData = await temp.json();
-    const generaEntry = speciesData.genera.find(entry => entry.language.name === 'en');
-    if (generaEntry) {
-      let enText = generaEntry.genus.replace(/[\f\n\r]/g, ' ');
-      document.getElementsByClassName('description')[0].textContent = 'Traduzindo...';
-      try {
-        const res = await fetch(`/api/translate?text=${encodeURIComponent(enText)}`);
-        const data = await res.json();
-        generaEntry.genus = data.translated || enText;
-      } catch (e) {
-        generaEntry.genus = enText;
+      if (pokemon.types.length > 1) {
+        url = pokemon.types[1].type.url;
+        temp = await fetch(url);
+        let secondTypeData = await temp.json();
+        if (secondTypeData.sprites?.['generation-viii']?.['brilliant-diamond-shining-pearl']?.name_icon) {
+          const secondTypeIcon = document.createElement('img');
+          secondTypeIcon.classList.add('typeIcon');
+          secondTypeIcon.src = secondTypeData.sprites['generation-viii']['brilliant-diamond-shining-pearl'].name_icon;
+          if (typeContainer) typeContainer.appendChild(secondTypeIcon);
+        }
       }
     }
-    let flavorText = 'Nenhuma descrição disponível.';
-    if (pokemon_flavor_texts && pokemon_flavor_texts[pokemon.id]) {
-        flavorText = pokemon_flavor_texts[pokemon.id].flavor_text;
-    } else {
-        const flavorTextEntry = speciesData.flavor_text_entries.find(entry => entry.language.name === 'en');
-        if (flavorTextEntry) {
-            let enText = flavorTextEntry.flavor_text.replace(/[\f\n\r]/g, ' ');
-            document.getElementsByClassName('description')[0].textContent = 'Traduzindo...';
-            try {
-                const res = await fetch(`/api/translate?text=${encodeURIComponent(enText)}`);
-                const data = await res.json();
-                flavorText = data.translated || enText;
-            } catch (e) {
-                flavorText = enText;
-            }
-        }
+
+    if (pokemon.species?.url) {
+      let url = pokemon.species.url;
+      let temp = await fetch(url);
+      const speciesData = await temp.json();
+      const generaEntry = speciesData.genera?.find(entry => entry.language.name === 'en');
+      const genus = generaEntry ? generaEntry.genus.replace(/[\f\n\r]/g, ' ') : 'No genus available.';
+
+      const flavorTextEntry = speciesData.flavor_text_entries?.find(entry => entry.language.name === 'en');
+      const flavorText = flavorTextEntry ? flavorTextEntry.flavor_text.replace(/[\f\n\r]/g, ' ') : 'No description available.';
+
+      const genElem = document.getElementsByClassName('genera')[0];
+      const descElem = document.getElementsByClassName('description')[0];
+      const altElem = document.getElementsByClassName('altura')[0];
+      const pesoElem = document.getElementsByClassName('peso')[0];
+
+      if (genElem) genElem.textContent = genus;
+      if (descElem) descElem.textContent = flavorText;
+      if (altElem) altElem.textContent = ` ${pokemon.height / 10} m`;
+      if (pesoElem) pesoElem.textContent = ` ${pokemon.weight / 10} kg`;
     }
 
-    document.getElementsByClassName('genera')[0].textContent = generaEntry ? generaEntry.genus : 'Categoria não disponível.';
-    document.getElementsByClassName('description')[0].textContent = flavorText;
-    document.getElementsByClassName('altura')[0].textContent = ` ${pokemon.height / 10} m`;
-    document.getElementsByClassName('peso')[0].textContent = ` ${pokemon.weight / 10} kg`;
-
-    // Esconder loading e mostrar as informações
     if (visorReset) {
       visorReset.classList.add('hidden');
-      if (visorResetText) visorResetText.textContent = 'Selecione um pokémon';
+      if (visorResetText) visorResetText.textContent = 'Select a Pokémon';
     }
     infoSection.classList.remove('hidden');
     statsSection.classList.add('hidden');
     movesSection.classList.add('hidden');
     evosSection.classList.add('hidden');
-  }
-  else {
-    alert('Por favor, insira o nome de um Pokémon.');
+  } else {
+    alert('Please enter a Pokemon name.');
   }
 }
 
-//função para carregar e exibir as stats do pokemon selecionado
+// Load and display stats for the selected Pokemon
 async function pokeStats(pokemon) {
   if (pokemon && pokemon.stats) {
     const stats = pokemon.stats;
-    document.querySelectorAll('.progressBar')[0].style.width = `${(stats[0].base_stat / 255) * 100}%`;
-    document.querySelectorAll('.progressBar')[1].style.width = `${(stats[1].base_stat / 190) * 100}%`;
-    document.querySelectorAll('.progressBar')[2].style.width = `${(stats[2].base_stat / 250) * 100}%`;
-    document.querySelectorAll('.progressBar')[3].style.width = `${(stats[3].base_stat / 194) * 100}%`;
-    document.querySelectorAll('.progressBar')[4].style.width = `${(stats[4].base_stat / 250) * 100}%`;
-    document.querySelectorAll('.progressBar')[5].style.width = `${(stats[5].base_stat / 200) * 100}%`;
-    document.querySelectorAll('.statValue')[0].textContent = stats[0].base_stat;
-    document.querySelectorAll('.statValue')[1].textContent = stats[1].base_stat;
-    document.querySelectorAll('.statValue')[2].textContent = stats[2].base_stat;
-    document.querySelectorAll('.statValue')[3].textContent = stats[3].base_stat;
-    document.querySelectorAll('.statValue')[4].textContent = stats[4].base_stat;
-    document.querySelectorAll('.statValue')[5].textContent = stats[5].base_stat;
+    const progressBars = document.querySelectorAll('.progressBar');
+    const statValues = document.querySelectorAll('.statValue');
+
+    if (progressBars.length >= 6) {
+      progressBars[0].style.width = `${(stats[0].base_stat / 255) * 100}%`;
+      progressBars[1].style.width = `${(stats[1].base_stat / 190) * 100}%`;
+      progressBars[2].style.width = `${(stats[2].base_stat / 250) * 100}%`;
+      progressBars[3].style.width = `${(stats[3].base_stat / 194) * 100}%`;
+      progressBars[4].style.width = `${(stats[4].base_stat / 250) * 100}%`;
+      progressBars[5].style.width = `${(stats[5].base_stat / 200) * 100}%`;
+    }
+
+    if (statValues.length >= 6) {
+      statValues[0].textContent = stats[0].base_stat;
+      statValues[1].textContent = stats[1].base_stat;
+      statValues[2].textContent = stats[2].base_stat;
+      statValues[3].textContent = stats[3].base_stat;
+      statValues[4].textContent = stats[4].base_stat;
+      statValues[5].textContent = stats[5].base_stat;
+    }
+
     infoSection.classList.add('hidden');
     statsSection.classList.remove('hidden');
     movesSection.classList.add('hidden');
     evosSection.classList.add('hidden');
-  }
-  else {
-    alert('Por favor, insira o nome de um Pokémon.');
+  } else {
+    alert('Please enter a Pokemon name.');
   }
 }
 
-//função para carregar e exibir os 10 primeiros movimentos do pokemon selecionado
+// Load and display the first 10 moves of the selected Pokemon
 async function pokeMoves(pokemon) {
   if (pokemon && pokemon.moves) {
     const movesList = document.querySelector('.moveList');
+    if (!movesList) return;
     movesList.innerHTML = '';
     for (let i = 0; i < Math.min(pokemon.moves.length, 10); i++) {
       let url = pokemon.moves[i].move.url;
       let temp = await fetch(url);
       let moveData = await temp.json();
-      let typeUrl = moveData.type.url;
-      temp = await fetch(typeUrl);
-      let typeData = await temp.json();
-      let enDesc = moveData.flavor_text_entries.find(entry => entry.language.name === 'en')?.flavor_text.replace(/[\f\n\r]/g, ' ') || '';
-      let displayDesc = enDesc ? 'Traduzindo...' : 'Nenhuma descrição disponível.';
-      let descId = `move-desc-${pokemon.id}-${i}`;
-      
-      let enName = moveData.names.find(name => name.language.name === 'en')?.name || '';
-      let displayName = enName ? 'Traduzindo...' : 'Desconhecido';
-      let nameId = `move-name-${pokemon.id}-${i}`;
+      let typeUrl = moveData.type?.url;
+      let typeIconSrc = '';
+      if (typeUrl) {
+        temp = await fetch(typeUrl);
+        let typeData = await temp.json();
+        typeIconSrc = typeData.sprites?.['generation-viii']?.['brilliant-diamond-shining-pearl']?.name_icon || '';
+      }
+      let moveName = moveData.names?.find(name => name.language.name === 'en')?.name || (moveData.name ? moveData.name.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase()) : 'Unknown');
+      let moveDesc = moveData.flavor_text_entries?.find(entry => entry.language.name === 'en')?.flavor_text.replace(/[\f\n\r]/g, ' ') || 'No description available.';
 
       movesList.innerHTML += `<li class="moveItem card glow">
                 <div class="moveTitle">
-                  <p id="${nameId}">${displayName}</p>
+                  <p>${moveName}</p>
                   <span class="moveType">
                     <img
-                      src=${typeData.sprites['generation-viii']['brilliant-diamond-shining-pearl'].name_icon}
+                      src="${typeIconSrc}"
                       alt="attack type"
                       class="typeIcon"
                     />
                   </span>
                 </div>
                 <div class="moveDesc">
-                  <p class="moveDescription" id="${descId}">
-                    ${displayDesc}
+                  <p class="moveDescription">
+                    ${moveDesc}
                   </p>
                 </div>
                 <div class="moveStats">
-                  <p class="power">Pdr: ${moveData.power || 'N/A'}</p>
-                  <p class="acuracy">Prc: ${moveData.accuracy ? `${moveData.accuracy}%` : 'N/A'}</p>
+                  <p class="power">Power: ${moveData.power || 'N/A'}</p>
+                  <p class="acuracy">Acc: ${moveData.accuracy ? `${moveData.accuracy}%` : 'N/A'}</p>
                   <p class="pp">PP: ${moveData.pp || 'N/A'}</p>
                 </div>
               </li>`;
-
-      if (enName) {
-        fetch(`/api/translate?text=${encodeURIComponent(enName)}`)
-          .then(res => res.json())
-          .then(data => {
-            const el = document.getElementById(nameId);
-            if (el) el.textContent = data.translated || enName;
-          })
-          .catch(() => {
-            const el = document.getElementById(nameId);
-            if (el) el.textContent = enName;
-          });
-      }
-
-      if (enDesc) {
-        fetch(`/api/translate?text=${encodeURIComponent(enDesc)}`)
-          .then(res => res.json())
-          .then(data => {
-            const el = document.getElementById(descId);
-            if (el) el.textContent = data.translated || enDesc;
-          })
-          .catch(() => {
-            const el = document.getElementById(descId);
-            if (el) el.textContent = enDesc;
-          });
-      }
     }
 
     infoSection.classList.add('hidden');
     statsSection.classList.add('hidden');
     movesSection.classList.remove('hidden');
     evosSection.classList.add('hidden');
-  }
-  else {
-    alert('Por favor, insira o nome de um Pokémon.');
+  } else {
+    alert('Please enter a Pokemon name.');
   }
 }
 
-//função para carregar e exibir as evoluções do pokemon selecionado -- por conta da dificuldade por enquanto apenas mostra as evoluções diretas, 
-// ou seja, se o pokemon tiver mais de uma evolução, apenas a primeira será mostrada. O ideal seria mostrar todas as evoluções, mas isso exigiria
-//  uma lógica mais complexa para percorrer toda a cadeia evolutiva que irei me empenhar mais para frente.
+// Load and display direct evolutions of the selected Pokemon
 async function pokeEvos(pokemon) {
   if (pokemon && pokemon.species) {
     const evosList = document.querySelector('.evoList');
+    if (!evosList) return;
     evosList.innerHTML = '';
     let url = pokemon.species.url;
     let temp = await fetch(url);
@@ -559,143 +558,159 @@ async function pokeEvos(pokemon) {
       temp = await fetch(url);
       let evoData = await temp.json();
       const evoChain = [];
-      //percorre toda a cadeia evolutiva da url ate encontrar o pokemon selecionado e adiciona as evoluções diretas a uma lista
+
       const collectEvolutions = (node) => {
         if (!node) {
           return;
         }
 
         if (node.species?.name === pokemon.name) {
-          evoChain.push(...node.evolves_to);
+          evoChain.push(...(node.evolves_to || []));
           return;
         }
 
-        node.evolves_to.forEach(child => collectEvolutions(child));
+        (node.evolves_to || []).forEach(child => collectEvolutions(child));
       };
 
       collectEvolutions(evoData.chain);
       evosList.innerHTML = '';
       if (evoChain.length === 0) {
-        evosList.innerHTML = '<p>Nenhuma evolução disponível.</p>';
+        evosList.innerHTML = '<p>No evolutions available.</p>';
       } else {
-        // para cada evolução direta encontrada, busca os dados do pokemon evoluído e exibe o nome, número, imagem e detalhes da evolução (se houver)
-        //por enquanto apenas filtra pedra evolutiva, todos os demais casos sao tratados como level up, o que não é o ideal, mas para isso 
-        // seria necessário criar uma lógica mais complexa para tratar cada caso de evolução, planejo montar essa logica posteriormente.
-        evoChain.forEach(async (evo) => {
-          const name = evo.species.name;
+        for (const evo of evoChain) {
+          const name = evo.species?.name;
+          if (!name) continue;
           const evoData = await fetchPokemonData(name);
-          if (evo.evolution_details[0]?.trigger.name === 'level-up') {
-            if (evo.evolution_details[0]?.min_level) {
+          if (!evoData) continue;
+          const details = evo.evolution_details?.[0];
+          const triggerName = details?.trigger?.name;
+          const evoFormattedName = name.charAt(0).toUpperCase() + name.slice(1);
+          const evoImg = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${evoData.id}.png`;
+
+          if (triggerName === 'level-up') {
+            if (details?.min_level) {
               evosList.innerHTML += `<li class="evoItem">
               <article class="evoItem">
-              <p class="evoName">${evo.species.name.charAt(0).toUpperCase() + evo.species.name.slice(1)} - <span class="evoNumber">#${evoData.id}</span></p>
+              <p class="evoName">${evoFormattedName} - <span class="evoNumber">#${evoData.id}</span></p>
               <img
-                src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${evoData.id}.png"
+                src="${evoImg}"
                 alt="pokemon evo"
                 class="evoImage"
               />
               <div class="textCenter">
-                <p class="evoTitle">Requer subir de nível</p>
-                <p class="evoDetails">Nível: ${evo.evolution_details[0]?.min_level}</p>
+                <p class="evoTitle">Requires Level Up</p>
+                <p class="evoDetails">Level: ${details.min_level}</p>
               </div>
             </article>
             </li>`;
-            } else if (evo.evolution_details[0]?.trigger.name === 'level-up' && evo.evolution_details[0]?.location_name && !evo.evolution_details[0]?.min_happiness) {
+            } else if (details?.location_name && !details?.min_happiness) {
               evosList.innerHTML += `<li class="evoItem">
               <article class="evoItem">
-              <p class="evoName">${evo.species.name.charAt(0).toUpperCase() + evo.species.name.slice(1)} - <span class="evoNumber">#${evoData.id}</span></p>
+              <p class="evoName">${evoFormattedName} - <span class="evoNumber">#${evoData.id}</span></p>
               <img
-                src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${evoData.id}.png"
+                src="${evoImg}"
                 alt="pokemon evo"
                 class="evoImage"
               />
               <div class="textCenter">
-                <p class="evoTitle">Requer subir de nível</p>
-                <p class="evoDetails">Nível: ${evo.evolution_details[0]?.min_level}</p>
+                <p class="evoTitle">Requires Level Up</p>
+                <p class="evoDetails">Level: ${details.min_level || 'N/A'}</p>
               </div>
             </article>
             </li>`;
-            } else if (evo.evolution_details[0]?.trigger.name === 'level-up' && evo.evolution_details[0]?.min_happiness && evo.evolution_details[0]?.location_name && !evo.evolution_details[0]?.time_of_day) {
+            } else if (details?.min_happiness && details?.location_name && !details?.time_of_day) {
               evosList.innerHTML += `<li class="evoItem">
               <article class="evoItem">
-              <p class="evoName">${evo.species.name.charAt(0).toUpperCase() + evo.species.name.slice(1)} - <span class="evoNumber">#${evoData.id}</span></p>
+              <p class="evoName">${evoFormattedName} - <span class="evoNumber">#${evoData.id}</span></p>
               <img
-                src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${evoData.id}.png"
+                src="${evoImg}"
                 alt="pokemon evo"
                 class="evoImage"
               />
               <div class="textCenter">
-                <p class="evoTitle">Requer subir de nível</p>
-                <p class="evoDetails">Nível: ${evo.evolution_details[0]?.min_level}</p>
+                <p class="evoTitle">Requires Level Up</p>
+                <p class="evoDetails">Level: ${details.min_level || 'N/A'}</p>
+              </div>
+            </article>
+            </li>`;
+            } else {
+              evosList.innerHTML += `<li class="evoItem">
+              <article class="evoItem">
+              <p class="evoName">${evoFormattedName} - <span class="evoNumber">#${evoData.id}</span></p>
+              <img
+                src="${evoImg}"
+                alt="pokemon evo"
+                class="evoImage"
+              />
+              <div class="textCenter">
+                <p class="evoTitle">Requires Friendship</p>
+                <p class="evoDetails">Min Happiness: ${details?.min_happiness || 'N/A'}</p>
               </div>
             </article>
             </li>`;
             }
-
-            else {
-              evosList.innerHTML += `<li class="evoItem">
-              <article class="evoItem">
-              <p class="evoName">${evo.species.name.charAt(0).toUpperCase() + evo.species.name.slice(1)} - <span class="evoNumber">#${evoData.id}</span></p>
-              <img
-                src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${evoData.id}.png"
-                alt="pokemon evo"
-                class="evoImage"
-              />
-              <div class="textCenter">
-                <p class="evoTitle">Requer amizade</p>
-                <p class="evoDetails">Felicidade Mín: ${evo.evolution_details[0]?.min_happiness}</p>
-              </div>
-            </article>
-            </li>`;
-            }
-          } else if (evo.evolution_details[0]?.trigger.name === 'use-item') {
-
+          } else if (triggerName === 'use-item') {
             evosList.innerHTML += `<li class="evoItem">
               <article class="evoItem">
-              <p class="evoName">${evo.species.name.charAt(0).toUpperCase() + evo.species.name.slice(1)} - <span class="evoNumber">#${evoData.id}</span></p>
+              <p class="evoName">${evoFormattedName} - <span class="evoNumber">#${evoData.id}</span></p>
               <img
-                src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${evoData.id}.png"
+                src="${evoImg}"
+                alt="pokemon evo"
+                class="evoImage"
+              />
+              <div class="textCenter">
+                <p class="evoTitle">Requires Item</p>
+                <p class="evoDetails">Requires ${details?.item?.name ? details.item.name.replace(/-/g, ' ') : 'Item'}</p>
+              </div>
+            </article>
+            </li>`;
+          } else if (triggerName === 'trade' && details?.held_item) {
+            evosList.innerHTML += `<li class="evoItem">
+              <article class="evoItem">
+              <p class="evoName">${evoFormattedName} - <span class="evoNumber">#${evoData.id}</span></p>
+              <img
+                src="${evoImg}"
+                alt="pokemon evo"
+                class="evoImage"
+              />
+              <div class="textCenter">
+                <p class="evoTitle">Requires Trade</p>
+                <p class="evoDetails">Needs to hold ${details.held_item.name ? details.held_item.name.replace(/-/g, ' ') : 'Item'}</p>
+              </div>
+            </article>
+            </li>`;
+          } else if (triggerName === 'trade') {
+            evosList.innerHTML += `<li class="evoItem">
+              <article class="evoItem">
+              <p class="evoName">${evoFormattedName} - <span class="evoNumber">#${evoData.id}</span></p>
+              <img
+                src="${evoImg}"
+                alt="pokemon evo"
+                class="evoImage"
+              />
+              <div class="textCenter">
+                <p class="evoTitle">Requires Trade</p>
+                <p class="evoDetails"></p>
+              </div>
+            </article>
+            </li>`;
+          } else {
+            evosList.innerHTML += `<li class="evoItem">
+              <article class="evoItem">
+              <p class="evoName">${evoFormattedName} - <span class="evoNumber">#${evoData.id}</span></p>
+              <img
+                src="${evoImg}"
                 alt="pokemon evo"
                 class="evoImage"
               />
               <div class="textCenter">
                 <p class="evoTitle"></p>
-                <p class="evoDetails"> Requer ${evo.evolution_details[0].item.name.replace(/-/g, ' ')}</p>
-              </div>
-            </article>
-            </li>`;
-          } else if (evo.evolution_details[0]?.trigger.name === 'trade' && evo.evolution_details[0]?.held_item) {
-            evosList.innerHTML += `<li class="evoItem">
-              <article class="evoItem">
-              <p class="evoName">${evo.species.name.charAt(0).toUpperCase() + evo.species.name.slice(1)} - <span class="evoNumber">#${evoData.id}</span></p>
-              <img
-                src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${evoData.id}.png"
-                alt="pokemon evo"
-                class="evoImage"
-              />
-              <div class="textCenter">
-                <p class="evoTitle">Requer troca</p>
-                <p class="evoDetails">Precisa segurar ${evo.evolution_details[0].held_item.name.replace(/-/g, ' ')}</p>
-              </div>
-            </article>
-            </li>`;
-          } else if (evo.evolution_details[0]?.trigger.name === 'trade') {
-            evosList.innerHTML += `<li class="evoItem">
-              <article class="evoItem">
-              <p class="evoName">${evo.species.name.charAt(0).toUpperCase() + evo.species.name.slice(1)} - <span class="evoNumber">#${evoData.id}</span></p>
-              <img
-                src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${evoData.id}.png"
-                alt="pokemon evo"
-                class="evoImage"
-              />
-              <div class="textCenter">
-                <p class="evoTitle">Requer troca</p>
                 <p class="evoDetails"></p>
               </div>
             </article>
             </li>`;
           }
-        });
+        }
       }
 
       infoSection.classList.add('hidden');
@@ -703,39 +718,36 @@ async function pokeEvos(pokemon) {
       movesSection.classList.add('hidden');
       evosSection.classList.remove('hidden');
     }
+  } else {
+    alert('Please enter a Pokemon name.');
   }
-  else {
-    alert('Por favor, insira o nome de um Pokémon.');
-  }
-
-
 }
 
-// Função para reproduzir o som do Pokémon
+// Function to play Pokemon sound
 const playPokemonSound = (pokemonId) => {
-  if (isMuted) return;
+  if (typeof Audio === 'undefined' || isMuted) return;
 
   try {
     const cryUrl = `https://raw.githubusercontent.com/PokeAPI/cries/main/cries/pokemon/latest/${pokemonId}.ogg`;
     const audio = new Audio(cryUrl);
     audio.play().catch(error => {
-      console.log('Som não disponível para este Pokémon:', error);
+      console.log('Sound not available for this Pokemon:', error);
     });
   } catch (error) {
-    console.error('Erro ao tentar reproduzir som:', error);
+    console.error('Error trying to play sound:', error);
   }
-}
+};
 
-
-//função para popular a home com cards de pokemons utilizando paginação de 6 cards por vez para nao sobrecarregar a API e o navegador, 
-// por enquanto a paginação é feita apenas para os primeiros 151 pokemons, mas planejo expandir isso para os demais pokemons posteriormente.
+// Populate home with Pokemon cards
 const loadHomePage = async (offset = 0, limit = 6, initialSelectedIndex = 0) => {
   const homeContainer = document.querySelector('.home');
+  if (!homeContainer) return;
   homeContainer.innerHTML = '';
   try {
     const response = await fetch(`https://pokeapi.co/api/v2/pokemon?offset=${offset}&limit=${limit}`);
+    if (!response.ok) return;
     const data = await response.json();
-    const pokemonList = data.results;
+    const pokemonList = data.results || [];
     for (let index = 0; index < pokemonList.length; index++) {
       const pokemon = pokemonList[index];
       const pokemonData = await fetchPokemonData(pokemon.name);
@@ -760,7 +772,7 @@ const loadHomePage = async (offset = 0, limit = 6, initialSelectedIndex = 0) => 
 
       pokemonCard.addEventListener('click', () => {
         pokeInfo(pokemonData);
-        homeSection.classList.add('hidden');
+        if (homeSection) homeSection.classList.add('hidden');
       });
 
       pokemonCard.addEventListener('mouseenter', () => {
@@ -784,20 +796,11 @@ const loadHomePage = async (offset = 0, limit = 6, initialSelectedIndex = 0) => 
   } catch (error) {
     console.error('Error loading home page:', error);
   }
-}
+};
 
-// Inicia o app carregando as traduções e depois a página inicial
-async function initApp() {
-  try {
-    const response = await fetch('pokemon_flavor_texts.json');
-    pokemon_flavor_texts = await response.json();
-  } catch (error) {
-    console.error('Failed to load translated texts:', error);
-  }
+// Initialize app and load the home page
+const initApp = () => {
   loadHomePage();
-}
+};
 
 initApp();
-
-// Lógica para os botões de navegação da home
-let currentOffset = 0;
